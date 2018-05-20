@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,6 +35,14 @@ namespace WhatNow.Essentials
                     tasks[pipe] = task;
                 }
             }
+        }
+
+        public async Task AsyncExecute()
+        {
+            if (IsFinished)
+                throw new InvalidOperationException();
+
+           await new Task(() => { while (!IsFinished) DoEvents(); });
         }
 
         public bool IsFinished
