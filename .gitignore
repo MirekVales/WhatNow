@@ -1,0 +1,9 @@
+WhatNow/.vs/
+WhatNow/Release/
+WhatNow/WhatNow.Contracts/bin/Debug/netstandard2.0/WhatNow.Contracts.deps.json
+WhatNow/WhatNow.Contracts/bin/
+WhatNow/WhatNow.Contracts/obj/
+WhatNow/WhatNow.Essentials/bin/
+WhatNow/WhatNow.Essentials/obj/
+WhatNow/WhatNow.Tests/bin/
+WhatNow/WhatNow.Tests/obj/
