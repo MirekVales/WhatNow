@@ -9,7 +9,7 @@ namespace WhatNow.Contracts
         bool IsFinished { get; }
 
         void DoEvents();
-        IEnumerable<BreakRequestReason> GetBreakReasons();
+        IEnumerable<(IActionPipe, BreakRequestReason)> GetBreakReasons();
         IEnumerable<(IActionPipe,ProcessingStatistics)> ProcessingStats { get; }
     }
 }

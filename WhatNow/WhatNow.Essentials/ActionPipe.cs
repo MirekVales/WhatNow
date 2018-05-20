@@ -9,16 +9,15 @@ namespace WhatNow.Essentials
 {
     public class ActionPipe : IActionPipe
     {
-        readonly IActionPipeMap map;
         readonly Dictionary<Type, ActionBase> actions;
 
         public ActionBase[] Current { get; private set; }
-        public ActionBase[] Next => map
+        public ActionBase[] Next => Map
             .GetNext(Current)
             .Select(t => actions[t])
             .ToArray();
 
-        public IActionPipeMap Map => map;
+        public IActionPipeMap Map { get; }
 
         public bool Finished => actions.All(a => a.Value.Finished);
 
@@ -35,7 +34,7 @@ namespace WhatNow.Essentials
 
         public ActionPipe(IActionPipeMap map, ActionToken actionToken, DependencyContainer dependencyContainer)
         {
-            this.map = map;
+            Map = map;
 
             actions = map
                 .UsedActionTypes
@@ -77,7 +76,7 @@ namespace WhatNow.Essentials
             {
                 yield return new ProcessingStatistics(
                     type.Key,
-                    map.GetPosition(type.Key),
+                    Map.GetPosition(type.Key),
                     type.Value.Count,
                     type.Value.Any()
                     ? TimeSpan.FromSeconds(type.Value.Select(v => v.TotalSeconds).Average())

@@ -120,7 +120,7 @@ namespace WhatNow.Tests
         {
             map.StartsAt<DummyAction1>();
 
-            Assert.ThrowsException<Exception>(() => map.Then<DummyAction1>());
+            Assert.ThrowsException<MultipleActionUseException> (() => map.Then<DummyAction1>());
         }
 
         class DummyAction : ActionBase

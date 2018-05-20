@@ -25,7 +25,7 @@ namespace WhatNow.Essentials
             where T : ActionBase
         {
             if (types.Contains(typeof(T)))
-                throw new Exception("This action is already used");
+                throw new MultipleActionUseException();
 
             foreach (var ctype in currentType)
                 map.Add(Tuple.Create(typeof(T), ctype));
@@ -42,7 +42,7 @@ namespace WhatNow.Essentials
             where T2 : ActionBase
         {
             if (types.Contains(typeof(T1)) || types.Contains(typeof(T2)))
-                throw new Exception("This action is already used");
+                throw new MultipleActionUseException();
 
             foreach (var ctype in currentType)
             {
@@ -63,7 +63,7 @@ namespace WhatNow.Essentials
             where T3 : ActionBase
         {
             if (types.Contains(typeof(T1)) || types.Contains(typeof(T2)) || types.Contains(typeof(T3)))
-                throw new Exception("This action is already used");
+                throw new MultipleActionUseException();
 
             foreach (var ctype in currentType)
             {
