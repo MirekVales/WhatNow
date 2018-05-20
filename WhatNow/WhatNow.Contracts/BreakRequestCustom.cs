@@ -8,8 +8,8 @@ namespace WhatNow.Contracts
 
         public object Tag { get; }
 
-        public BreakRequestCustom(Type actionType, string reason, object tag)
-            : base(actionType)
+        public BreakRequestCustom(Type actionType, string reason, object tag = null)
+            : base(actionType, reason)
         {
             Reason = reason;
             Tag = tag;

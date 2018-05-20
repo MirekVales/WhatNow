@@ -5,7 +5,7 @@ namespace WhatNow.Contracts
     public class BreakRequestException : BreakRequestReason
     {
         public BreakRequestException(Type actionType, Exception exception)
-            : base(actionType)
+            : base(actionType, exception.Message)
         {
             Exception = exception;
         }
