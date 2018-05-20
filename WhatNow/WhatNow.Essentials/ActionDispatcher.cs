@@ -31,7 +31,6 @@ namespace WhatNow.Essentials
 
                 if (pipe.TryGetNextTask(cancellationTokenSource.Token, out Task task))
                 {
-                    tasks[pipe].Dispose();
                     tasks[pipe] = task;
                 }
             }
@@ -52,7 +51,6 @@ namespace WhatNow.Essentials
         public void Dispose()
         {
             cancellationTokenSource.Dispose();
-            tasks.Values.ToList().ForEach(t => t.Dispose());
         }
     }
 }
