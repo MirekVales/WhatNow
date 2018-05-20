@@ -16,5 +16,8 @@ namespace WhatNow.Contracts
             ExecutionCount = executionCount;
             AverageDuration = duration;
         }
+
+        public override string ToString()
+            => $"[{LocationInActionMap}] {ActionType.Name} ({ExecutionCount} @ {AverageDuration})";
     }
 }
