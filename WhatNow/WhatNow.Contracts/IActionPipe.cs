@@ -16,5 +16,7 @@ namespace WhatNow.Contracts
         IEnumerable<ProcessingStatistics> ProcessingStats { get; }
 
         bool TryGetNextTask(CancellationToken cancellationToken, out Task task);
+
+        void Restart(ActionToken actionToken, DependencyContainer dependencyContainer);
     }
 }

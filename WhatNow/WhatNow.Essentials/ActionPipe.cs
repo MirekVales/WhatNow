@@ -9,7 +9,7 @@ namespace WhatNow.Essentials
 {
     public class ActionPipe : IActionPipe
     {
-        readonly Dictionary<Type, ActionBase> actions;
+        Dictionary<Type, ActionBase> actions;
 
         public ActionBase[] Current { get; private set; }
         public ActionBase[] Next => Map
@@ -43,6 +43,18 @@ namespace WhatNow.Essentials
             Current = new ActionBase[0];
 
             executions = actions.Keys.ToDictionary(k => k, v => new HashSet<TimeSpan>());
+        }
+
+        public void Restart(ActionToken actionToken, DependencyContainer dependencyContainer)
+        {
+            if (!Finished && !BreakRequested)
+                throw new InvalidOperationException();
+
+            actions = Map
+                .UsedActionTypes
+                .ToDictionary(k => k, t => (ActionBase)Activator.CreateInstance(t, dependencyContainer, actionToken));
+
+            Current = new ActionBase[0];
         }
 
         public bool TryGetNextTask(CancellationToken cancellationToken, out Task task)
