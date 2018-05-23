@@ -83,6 +83,7 @@ namespace WhatNow.Essentials
         {
             cancellationTokenSource.Cancel();
             cancellationTokenSource.Dispose();
+            pool.Dispose();
         }
     }
 }
