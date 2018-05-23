@@ -5,11 +5,11 @@ namespace WhatNow.Contracts
 {
     public interface IActionDispatcher : IDisposable
     {
+        IReadOnlyCollection<IActionPipe> Pipes { get; }
         bool EndedByBreak { get; }
         bool IsFinished { get; }
-
         void DoEvents();
-        IEnumerable<(IActionPipe, BreakRequestReason)> GetBreakReasons();
-        IEnumerable<(IActionPipe,ProcessingStatistics)> ProcessingStats { get; }
+        IEnumerable<(IActionPipe pipe, BreakRequestReason reason)> GetBreakReasons();
+        IEnumerable<(IActionPipe pipe, ProcessingStatistics statistics)> ProcessingStats { get; }
     }
 }
