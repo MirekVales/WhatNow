@@ -91,7 +91,7 @@ namespace WhatNow.Essentials
                     Map.GetPosition(type.Key),
                     type.Value.Count,
                     type.Value.Any()
-                    ? TimeSpan.FromSeconds(type.Value.Select(v => v.TotalSeconds).Average())
+                    ? TimeSpan.FromMilliseconds(type.Value.Select(v => v.TotalMilliseconds).Average())
                     : TimeSpan.Zero);
             }
         }
