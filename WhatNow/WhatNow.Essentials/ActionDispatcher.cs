@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Helios.Concurrency;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -13,20 +14,32 @@ namespace WhatNow.Essentials
         readonly CancellationTokenSource cancellationTokenSource;
         readonly Dictionary<IActionPipe, Task> tasks;
 
+        readonly DedicatedThreadPool pool;
+        readonly DedicatedThreadPoolTaskScheduler scheduler;
+        readonly TaskFactory taskFactory;
+
         public IReadOnlyCollection<IActionPipe> Pipes => pipes.ToArray();
 
-        public ActionDispatcher(IEnumerable<IActionPipe> actionPipes)
+        public ActionDispatcher(IEnumerable<IActionPipe> actionPipes, int maxDegreeOfParallelism = 8)
         {
             pipes = actionPipes.ToArray();
             cancellationTokenSource = new CancellationTokenSource();
             tasks = new Dictionary<IActionPipe, Task>(pipes.Length);
+
+            pool = new DedicatedThreadPool(new DedicatedThreadPoolSettings(maxDegreeOfParallelism));
+            scheduler = new DedicatedThreadPoolTaskScheduler(pool);
+            taskFactory = new TaskFactory(cancellationTokenSource.Token, TaskCreationOptions.None, TaskContinuationOptions.None, scheduler);
         }
 
-        public ActionDispatcher(params IActionPipe[] actionPipes)
+        public ActionDispatcher(int maxDegreeOfParallelism = 8, params IActionPipe[] actionPipes)
         {
             pipes = actionPipes.ToArray();
             cancellationTokenSource = new CancellationTokenSource();
             tasks = new Dictionary<IActionPipe, Task>(pipes.Length);
+
+            pool = new DedicatedThreadPool(new DedicatedThreadPoolSettings(maxDegreeOfParallelism));
+            scheduler = new DedicatedThreadPoolTaskScheduler(pool);
+            taskFactory = new TaskFactory(cancellationTokenSource.Token, TaskCreationOptions.None, TaskContinuationOptions.None, scheduler);
         }
 
         public void DoEvents()
@@ -39,7 +52,7 @@ namespace WhatNow.Essentials
                 if (tasks.ContainsKey(pipe) && !tasks[pipe].IsCompleted)
                     continue;
 
-                if (pipe.TryGetNextTask(cancellationTokenSource.Token, out Task task))
+                if (pipe.TryGetNextTask(taskFactory, out Task task))
                 {
                     tasks[pipe] = task;
                 }

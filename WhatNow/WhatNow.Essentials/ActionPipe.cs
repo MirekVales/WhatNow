@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using WhatNow.Contracts;
 
@@ -57,7 +56,7 @@ namespace WhatNow.Essentials
             Current = new ActionBase[0];
         }
 
-        public bool TryGetNextTask(CancellationToken cancellationToken, out Task task)
+        public bool TryGetNextTask(TaskFactory taskFactory, out Task task)
         {
             task = null;
 
@@ -68,11 +67,11 @@ namespace WhatNow.Essentials
                 if (!Current.Any())
                     return false;
 
-                var tasks = Current.Select(c => Task.Run(() =>
+                var tasks = Current.Select(c => taskFactory.StartNew(() =>
                 {
                     using (new BlockStopwatch(t => executions[c.GetType()].Add(t)))
                         c.ExecuteAction();
-                }, cancellationToken));
+                }));
                 task = Task.WhenAll(tasks);
                 return true;
             }

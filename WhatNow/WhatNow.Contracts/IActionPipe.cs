@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace WhatNow.Contracts
@@ -15,7 +14,7 @@ namespace WhatNow.Contracts
         IEnumerable<BreakRequestReason> BreakReasons { get; }
         IEnumerable<ProcessingStatistics> ProcessingStats { get; }
 
-        bool TryGetNextTask(CancellationToken cancellationToken, out Task task);
+        bool TryGetNextTask(TaskFactory taskFactory, out Task task);
 
         void Restart(ActionToken actionToken, DependencyContainer dependencyContainer);
     }

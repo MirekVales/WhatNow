@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using WhatNow.Contracts;
 using WhatNow.Essentials;
@@ -12,7 +11,7 @@ namespace WhatNow.Tests
     {
         readonly ActionPipeMap map;
         readonly ActionToken token;
-        readonly CancellationTokenSource cancellationTokenSource;
+        readonly TaskFactory taskFactory;
 
         public ActionPipeTests()
         {
@@ -21,12 +20,7 @@ namespace WhatNow.Tests
                 .Then<DummyAction2>()
                 .ThenParallely<DummyAction3, DummyAction4>();
             token = new ActionToken();
-            cancellationTokenSource = new CancellationTokenSource();
-        }
-
-        ~ActionPipeTests()
-        {
-            cancellationTokenSource.Dispose();
+            taskFactory = new TaskFactory();
         }
 
         [TestMethod]
@@ -38,15 +32,15 @@ namespace WhatNow.Tests
             Assert.IsTrue(pipe.FinishedCurrent);
             Assert.AreEqual(0, pipe.Current.Length);
 
-            Assert.IsTrue(pipe.TryGetNextTask(cancellationTokenSource.Token, out Task t1));
+            Assert.IsTrue(pipe.TryGetNextTask(taskFactory, out Task t1));
             t1.Wait();
             Assert.AreEqual(1, pipe.Current.Length);
             Assert.AreEqual(typeof(DummyAction1), pipe.Current[0].GetType());
-            Assert.IsTrue(pipe.TryGetNextTask(cancellationTokenSource.Token, out Task t2));
+            Assert.IsTrue(pipe.TryGetNextTask(taskFactory, out Task t2));
             t2.Wait();
             Assert.AreEqual(1, pipe.Current.Length);
             Assert.AreEqual(typeof(DummyAction2), pipe.Current[0].GetType());
-            Assert.IsTrue(pipe.TryGetNextTask(cancellationTokenSource.Token, out Task t3));
+            Assert.IsTrue(pipe.TryGetNextTask(taskFactory, out Task t3));
             t3.Wait();
             Assert.AreEqual(2, pipe.Current.Length);
             Assert.AreEqual(typeof(DummyAction3), pipe.Current[0].GetType());
@@ -55,7 +49,7 @@ namespace WhatNow.Tests
             Assert.IsFalse(pipe.BreakRequested);
             Assert.IsTrue(pipe.Finished);
             Assert.IsTrue(pipe.FinishedCurrent);
-            Assert.IsFalse(pipe.TryGetNextTask(cancellationTokenSource.Token, out Task _));
+            Assert.IsFalse(pipe.TryGetNextTask(taskFactory, out Task _));
             Assert.AreEqual(0, pipe.Current.Length);
 
             Assert.AreEqual(4, token.Get<DummyType>().Property);
