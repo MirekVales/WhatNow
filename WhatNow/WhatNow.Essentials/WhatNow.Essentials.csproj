@@ -12,6 +12,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Helios.DedicatedThreadPool" Version="0.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\WhatNow.Contracts\WhatNow.Contracts.csproj" />
   </ItemGroup>
 
