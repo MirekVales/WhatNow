@@ -73,12 +73,6 @@ namespace WhatNow.Essentials
         public bool EndedByBreak
             => pipes.Any(p => p.BreakRequested);
 
-        public IEnumerable<(IActionPipe pipe, BreakRequestReason reason)> GetBreakReasons()
-            => pipes.SelectMany(p => p.BreakReasons.Select(r => (p, r)));
-
-        public IEnumerable<(IActionPipe pipe, ProcessingStatistics statistics)> ProcessingStats
-            => pipes.SelectMany(p => p.ProcessingStats.Select(s => (p, s)));
-
         public void Dispose()
         {
             cancellationTokenSource.Cancel();
