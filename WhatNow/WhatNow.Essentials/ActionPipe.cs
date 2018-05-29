@@ -88,13 +88,20 @@ namespace WhatNow.Essentials
             return false;
         }
 
-		/// <summary>
-		/// Executes the action without generic type input, output. Not intended to be called outside of the framework
-		/// </summary>
 		void ExecuteAction(IAction action)
 		{
 			var inType = action.InputType;
-			var inValue = inType == typeof(NullObject) ? NullObject.Value : actionToken.Get(inType);
+			
+			object GetValue(Type type) => 
+				type == typeof(NullObject) ? NullObject.Value : actionToken.Get(type);
+
+			object GetMultiple(Type[] types)
+			{
+				var values = types.Select(GetValue).ToArray();
+				return Activator.CreateInstance(inType, values);
+			}
+
+			var inValue = inType.FullName.StartsWith("System.ValueTuple") ? GetMultiple(inType.GenericTypeArguments) : GetValue(inType);
 			var outValue = action.ExecuteUntyped(inValue);
 			if (!(outValue is NullObject))
 			{
