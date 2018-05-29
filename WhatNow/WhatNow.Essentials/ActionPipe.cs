@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using WhatNow.Contracts;
 using WhatNow.Contracts.Actions;
+using WhatNow.Contracts.Dependency;
 
 namespace WhatNow.Essentials
 {
