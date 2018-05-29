@@ -14,13 +14,15 @@ namespace WhatNow.Contracts
                 return values.ContainsKey(typeof(T));
         }
 
-        public T Get<T>()
+		public T Get<T>() => (T)Get(typeof(T));
+
+		public object Get(Type type)
         {
             lock (accessLock)
-                if (values.ContainsKey(typeof(T)))
-                    return (T)values[typeof(T)];
+                if (values.ContainsKey(type))
+                    return values[type];
 
-            throw new Exception($"Type {typeof(T).Name} was not found");
+            throw new Exception($"Type {type.Name} was not found");
         }
 
         public bool TryGet<T>(out T value)
@@ -56,10 +58,10 @@ namespace WhatNow.Contracts
             return false;
         }
 
-        public StoreType Set<T>(T value)
+        public StoreType Set(object value)
         {
             lock (accessLock)
-                values[typeof(T)] = value;
+                values[value.GetType()] = value;
 
             return this as StoreType;
         }

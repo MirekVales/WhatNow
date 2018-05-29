@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using WhatNow.Contracts.Actions;
 
 namespace WhatNow.Contracts
 {
@@ -7,15 +8,15 @@ namespace WhatNow.Contracts
     {
         IActionPipeMap Map { get; }
         bool BreakRequested { get; }
-        ActionBase[] Current { get; }
+		IAction[] Current { get; }
         bool Finished { get; }
         bool FinishedCurrent { get; }
-        ActionBase[] Next { get; }
+		IAction[] Next { get; }
         IEnumerable<BreakRequestReason> BreakReasons { get; }
         IEnumerable<ProcessingStatistics> ProcessingStats { get; }
 
         bool TryGetNextTask(TaskFactory taskFactory, out Task task);
 
-        void Restart(ActionToken actionToken, DependencyContainer dependencyContainer);
+        void Restart(ActionToken actionToken);
     }
 }

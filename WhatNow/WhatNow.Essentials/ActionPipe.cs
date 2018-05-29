@@ -3,15 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WhatNow.Contracts;
+using WhatNow.Contracts.Actions;
 
 namespace WhatNow.Essentials
 {
     public class ActionPipe : IActionPipe
     {
-        Dictionary<Type, ActionBase> actions;
+		readonly ActionToken actionToken;
 
-        public ActionBase[] Current { get; private set; }
-        public ActionBase[] Next => Map
+		readonly IDependencyResolver dependencyResolver;
+
+		Dictionary<Type, IAction> actions;
+
+        public IAction[] Current { get; private set; }
+        public IAction[] Next => Map
             .GetNext(Current)
             .Select(t => actions[t])
             .ToArray();
@@ -31,29 +36,31 @@ namespace WhatNow.Essentials
             .Where(br => br != null)
             .ToArray();
 
-        public ActionPipe(IActionPipeMap map, ActionToken actionToken, DependencyContainer dependencyContainer)
+        public ActionPipe(IActionPipeMap map, ActionToken actionToken, IDependencyResolver dependencyResolver)
         {
-            Map = map;
+			this.actionToken = actionToken;
+			this.dependencyResolver = dependencyResolver;
+			Map = map;
 
             actions = map
                 .UsedActionTypes
-                .ToDictionary(k => k, t => (ActionBase)Activator.CreateInstance(t, dependencyContainer, actionToken));
+                .ToDictionary(k => k, t => (IAction)dependencyResolver.Resolve(t));
 
-            Current = new ActionBase[0];
+            Current = new IAction[0];
 
             executions = actions.Keys.ToDictionary(k => k, v => new HashSet<TimeSpan>());
         }
 
-        public void Restart(ActionToken actionToken, DependencyContainer dependencyContainer)
+        public void Restart(ActionToken actionToken)
         {
             if (!Finished && !BreakRequested)
                 throw new InvalidOperationException();
 
             actions = Map
                 .UsedActionTypes
-                .ToDictionary(k => k, t => (ActionBase)Activator.CreateInstance(t, dependencyContainer, actionToken));
+				.ToDictionary(k => k, t => (IAction)dependencyResolver.Resolve(t));
 
-            Current = new ActionBase[0];
+			Current = new IAction[0];
         }
 
         public bool TryGetNextTask(TaskFactory taskFactory, out Task task)
@@ -69,14 +76,27 @@ namespace WhatNow.Essentials
 
                 var tasks = Current.Select(c => taskFactory.StartNew(() =>
                 {
-                    using (new BlockStopwatch(t => executions[c.GetType()].Add(t)))
-                        c.ExecuteAction();
+					using (new BlockStopwatch(t => executions[c.GetType()].Add(t)))
+					{
+						ExecuteAction(c);
+					}
                 }));
                 task = Task.WhenAll(tasks);
                 return true;
             }
             return false;
         }
+
+		void ExecuteAction(IAction action)
+		{
+			var inType = action.GetType().GenericTypeArguments[0];
+			var inValue = inType == typeof(NullObject) ? NullObject.Value : actionToken.Get(inType);
+			var outValue = action.ExecuteAction(inValue);
+			if (!(outValue is NullObject))
+			{
+				actionToken.Set(outValue);
+			}
+		}
 
         public IEnumerable<ProcessingStatistics> ProcessingStats
             => GetProcessingStats();

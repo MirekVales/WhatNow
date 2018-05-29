@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using WhatNow.Contracts;
+using WhatNow.Contracts.Actions;
 
 namespace WhatNow.Essentials
 {
@@ -13,7 +14,7 @@ namespace WhatNow.Essentials
         Type[] currentType = new Type[0];
 
         public ActionPipeMap StartsAt<T>()
-            where T : ActionBase
+            where T : IAction
         {
             currentType = new Type[] { typeof(T) };
 
@@ -22,8 +23,8 @@ namespace WhatNow.Essentials
         }
 
         public ActionPipeMap Then<T>()
-            where T : ActionBase
-        {
+            where T : IAction
+		{
             if (types.Contains(typeof(T)))
                 throw new MultipleActionUseException();
 
@@ -38,8 +39,8 @@ namespace WhatNow.Essentials
         }
 
         public ActionPipeMap ThenParallely<T1, T2>()
-            where T1 : ActionBase
-            where T2 : ActionBase
+            where T1 : IAction
+            where T2 : IAction
         {
             if (types.Contains(typeof(T1)) || types.Contains(typeof(T2)))
                 throw new MultipleActionUseException();
@@ -58,9 +59,9 @@ namespace WhatNow.Essentials
         }
 
         public ActionPipeMap ThenParallely<T1, T2, T3>()
-            where T1 : ActionBase
-            where T2 : ActionBase
-            where T3 : ActionBase
+            where T1 : IAction
+            where T2 : IAction
+            where T3 : IAction
         {
             if (types.Contains(typeof(T1)) || types.Contains(typeof(T2)) || types.Contains(typeof(T3)))
                 throw new MultipleActionUseException();
@@ -80,7 +81,7 @@ namespace WhatNow.Essentials
             return this;
         }
 
-        public IEnumerable<Type> GetNext(IEnumerable<ActionBase> currents)
+        public IEnumerable<Type> GetNext(IEnumerable<IAction> currents)
         {
             if (!currents.Any())
                 yield return types.Except(map.Select(m => m.Item1)).Single();
@@ -89,7 +90,7 @@ namespace WhatNow.Essentials
                     yield return next;
         }
 
-        IEnumerable<Type> GetNext(ActionBase current)
+        IEnumerable<Type> GetNext(IAction current)
             => map
                 .Where(p => p.Item2 == current.GetType())
                 .Select(p => p.Item1)
