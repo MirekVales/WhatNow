@@ -6,16 +6,10 @@ namespace WhatNow.Contracts.Actions
     { 
         protected readonly object accessLock = new object();
 
-        ActionToken token;
         bool breakRequested;
         BreakRequestReason breakRequestReason;
         bool finished;
 
-        public ActionToken Token
-        {
-            get { lock (accessLock) return token; }
-            private set { lock (accessLock) token = value; }
-        }
         public bool BreakRequested
         {
             get { lock (accessLock) return breakRequested; }
@@ -53,11 +47,6 @@ namespace WhatNow.Contracts.Actions
         {
             BreakRequestReason = reason;
             BreakRequested = true;
-        }
-
-        protected ActionBase(ActionToken actionToken)
-        {
-            Token = actionToken;
         }
     }
 }
