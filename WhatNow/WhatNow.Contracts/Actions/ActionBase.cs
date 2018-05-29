@@ -28,7 +28,7 @@ namespace WhatNow.Contracts.Actions
 
         private protected abstract TOutput DoExecuteAction(TInput input);
 
-        public object ExecuteAction(object input)
+        public object ExecuteUntyped(object input)
         {
             try
             {

@@ -8,6 +8,9 @@
 
 		bool Finished { get; }
 
-		object ExecuteAction(object input);
+		/// <summary>
+		/// Executes the action without generic type input, output. Not intended to be called outside of the framework
+		/// </summary>
+		object ExecuteUntyped(object input);
 	}
 }

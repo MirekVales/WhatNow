@@ -88,11 +88,14 @@ namespace WhatNow.Essentials
             return false;
         }
 
+		/// <summary>
+		/// Executes the action without generic type input, output. Not intended to be called outside of the framework
+		/// </summary>
 		void ExecuteAction(IAction action)
 		{
 			var inType = action.GetType().GenericTypeArguments[0];
 			var inValue = inType == typeof(NullObject) ? NullObject.Value : actionToken.Get(inType);
-			var outValue = action.ExecuteAction(inValue);
+			var outValue = action.ExecuteUntyped(inValue);
 			if (!(outValue is NullObject))
 			{
 				actionToken.Set(outValue);
