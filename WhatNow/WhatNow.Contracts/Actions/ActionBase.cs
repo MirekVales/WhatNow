@@ -43,7 +43,11 @@ namespace WhatNow.Contracts.Actions
             }
         }
 
-        protected void RequestBreak(BreakRequestReason reason)
+		public Type InputType => typeof(TInput);
+
+		public Type OutputType => typeof(TOutput);
+
+		protected void RequestBreak(BreakRequestReason reason)
         {
             BreakRequestReason = reason;
             BreakRequested = true;

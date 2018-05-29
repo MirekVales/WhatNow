@@ -93,7 +93,7 @@ namespace WhatNow.Essentials
 		/// </summary>
 		void ExecuteAction(IAction action)
 		{
-			var inType = action.GetType().GenericTypeArguments[0];
+			var inType = action.InputType;
 			var inValue = inType == typeof(NullObject) ? NullObject.Value : actionToken.Get(inType);
 			var outValue = action.ExecuteUntyped(inValue);
 			if (!(outValue is NullObject))

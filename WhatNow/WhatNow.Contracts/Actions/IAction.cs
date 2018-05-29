@@ -1,4 +1,6 @@
-﻿namespace WhatNow.Contracts.Actions
+﻿using System;
+
+namespace WhatNow.Contracts.Actions
 {
 	public interface IAction
 	{
@@ -12,5 +14,9 @@
 		/// Executes the action without generic type input, output. Not intended to be called outside of the framework
 		/// </summary>
 		object ExecuteUntyped(object input);
+
+		Type InputType { get; }
+
+		Type OutputType { get; }
 	}
 }
