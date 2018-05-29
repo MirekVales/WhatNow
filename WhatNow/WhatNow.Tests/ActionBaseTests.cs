@@ -21,7 +21,7 @@ namespace WhatNow.Tests
         {
             Assert.IsFalse(action.Finished);
             Assert.IsFalse(action.BreakRequested);
-			var result = action.Execute();
+			var result = action.ExecuteUntyped(NullObject.Value);
             Assert.AreEqual("Finished", result);
             Assert.IsTrue(action.Finished);
             Assert.IsFalse(action.BreakRequested);
@@ -32,8 +32,8 @@ namespace WhatNow.Tests
         {
             Assert.IsFalse(action2.Finished);
             Assert.IsFalse(action2.BreakRequested);
-			var result = action.Execute();
-            Assert.AreEqual("BreakRequested", result);
+			var result = action2.ExecuteUntyped(NullObject.Value);
+			Assert.AreEqual("BreakRequested", result);
             Assert.IsTrue(action2.Finished);
             Assert.IsTrue(action2.BreakRequested);
         }
