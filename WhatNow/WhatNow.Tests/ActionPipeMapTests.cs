@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using WhatNow.Contracts;
+using WhatNow.Contracts.Actions;
 using WhatNow.Essentials;
 
 namespace WhatNow.Tests
@@ -104,8 +105,8 @@ namespace WhatNow.Tests
                 .Then<DummyAction2>()
                 .ThenParallely<DummyAction3, DummyAction4>();
 
-            Assert.AreEqual(1, map.GetNext(new ActionBase[0]).Count());
-            Assert.AreEqual(typeof(DummyAction1), map.GetNext(new ActionBase[0]).First());
+            Assert.AreEqual(1, map.GetNext(new IAction[0]).Count());
+            Assert.AreEqual(typeof(DummyAction1), map.GetNext(new IAction[0]).First());
             Assert.AreEqual(1, map.GetNext(new[] { new DummyAction1()}).Count());
             Assert.AreEqual(typeof(DummyAction2), map.GetNext(new[] { new DummyAction1() }).First());
             Assert.AreEqual(2, map.GetNext(new[] { new DummyAction2() }).Count());
@@ -123,15 +124,16 @@ namespace WhatNow.Tests
             Assert.ThrowsException<MultipleActionUseException> (() => map.Then<DummyAction1>());
         }
 
-        class DummyAction : ActionBase
+        class DummyAction : StartActionBase<NullObject>
         {
-            public DummyAction() : base(new DependencyContainer(), new ActionToken())
+            public DummyAction() 
             {
             }
 
-            protected override void Execute()
-            {
-            }
+            public override NullObject Execute()
+			{
+				return NullObject.Value;
+			}
         }
 
         class DummyAction1 : DummyAction { }

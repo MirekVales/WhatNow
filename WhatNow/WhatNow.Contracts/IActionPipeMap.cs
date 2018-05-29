@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using WhatNow.Contracts.Actions;
 
 namespace WhatNow.Contracts
 {
@@ -7,7 +8,7 @@ namespace WhatNow.Contracts
     {
         IEnumerable<Type> UsedActionTypes { get; }
 
-        IEnumerable<Type> GetNext(IEnumerable<ActionBase> currents);
+        IEnumerable<Type> GetNext(IEnumerable<IAction> currents);
 
         int ComparePosition(Type t1, Type t2);
 
