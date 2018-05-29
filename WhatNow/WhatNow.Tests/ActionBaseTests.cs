@@ -1,21 +1,19 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using WhatNow.Contracts;
+using WhatNow.Contracts.Actions;
 
 namespace WhatNow.Tests
 {
     [TestClass]
     public class ActionBaseTests
     {
-        readonly ActionToken token;
         readonly DummyAction action;
         readonly DummyAction action2;
 
         public ActionBaseTests()
         {
-            var container = new DependencyContainer();
-            token = new ActionToken();
-            action = new DummyAction(false, container, token);
-            action2 = new DummyAction(true, container, token);
+            action = new DummyAction(false);
+            action2 = new DummyAction(true);
         }
 
         [TestMethod]
@@ -23,8 +21,8 @@ namespace WhatNow.Tests
         {
             Assert.IsFalse(action.Finished);
             Assert.IsFalse(action.BreakRequested);
-            action.ExecuteAction();
-            Assert.AreEqual("Finished", token.Get<string>());
+			var result = action.Execute();
+            Assert.AreEqual("Finished", result);
             Assert.IsTrue(action.Finished);
             Assert.IsFalse(action.BreakRequested);
         }
@@ -34,32 +32,32 @@ namespace WhatNow.Tests
         {
             Assert.IsFalse(action2.Finished);
             Assert.IsFalse(action2.BreakRequested);
-            action2.ExecuteAction();
-            Assert.AreEqual("BreakRequested", token.Get<string>());
+			var result = action.Execute();
+            Assert.AreEqual("BreakRequested", result);
             Assert.IsTrue(action2.Finished);
             Assert.IsTrue(action2.BreakRequested);
         }
 
-        private class DummyAction : ActionBase
+        private class DummyAction : StartActionBase<string>
         {
             readonly bool requestBreak;
 
-            public DummyAction(bool requestBreak, DependencyContainer container, ActionToken token)
-                : base(container, token)
+            public DummyAction(bool requestBreak)
             {
                 this.requestBreak = requestBreak;
             }
 
-            protected override void Execute()
-            {
-                if (requestBreak)
-                {
-                    RequestBreak(new BreakRequestCustom(this.GetType(), "", null));
-                    Token.Set("BreakRequested");
-                }
-                else
-                    Token.Set("Finished");
-            }
-        }
+			public override string Execute()
+			{
+				if (requestBreak)
+				{
+					RequestBreak(new BreakRequestCustom(this.GetType(), "", null));
+					return "BreakRequested";
+				}
+				else
+					return "Finished";
+
+			}
+		}
     }
 }
