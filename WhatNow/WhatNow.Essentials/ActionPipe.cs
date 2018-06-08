@@ -52,7 +52,7 @@ namespace WhatNow.Essentials
             executions = actions.Keys.ToDictionary(k => k, v => new HashSet<TimeSpan>());
         }
 
-        public void Restart(ActionToken actionToken)
+        public void Restart()
         {
             if (!Finished && !BreakRequested)
                 throw new InvalidOperationException();

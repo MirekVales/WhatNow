@@ -17,6 +17,6 @@ namespace WhatNow.Contracts
 
         bool TryGetNextTask(TaskFactory taskFactory, out Task task);
 
-        void Restart(ActionToken actionToken);
+        void Restart();
     }
 }

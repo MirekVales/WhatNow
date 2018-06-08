@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using WhatNow.Contracts;
 using WhatNow.Contracts.Actions;
-using WhatNow.Contracts.Dependency;
 using WhatNow.Essentials;
+using WhatNow.Essentials.Dependency;
 
 namespace WhatNow.Tests
 {
