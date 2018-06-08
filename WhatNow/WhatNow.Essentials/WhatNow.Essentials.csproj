@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net46</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net45;net46</TargetFrameworks>
     <Authors>Mirek Vales</Authors>
     <Copyright>Copyright © 2018 Mirek Vales</Copyright>
     <Company>Mirek Vales</Company>
