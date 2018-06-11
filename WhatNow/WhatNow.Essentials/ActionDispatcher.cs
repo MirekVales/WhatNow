@@ -20,24 +20,24 @@ namespace WhatNow.Essentials
 
         public IReadOnlyCollection<IActionPipe> Pipes => pipes.ToArray();
 
-        public ActionDispatcher(IEnumerable<IActionPipe> actionPipes, int maxDegreeOfParallelism = 8)
+        public ActionDispatcher(IEnumerable<IActionPipe> actionPipes, int numberOfThreadPoolThreads = 8)
         {
             pipes = actionPipes.ToArray();
             cancellationTokenSource = new CancellationTokenSource();
             tasks = new Dictionary<IActionPipe, Task>(pipes.Length);
 
-            pool = new DedicatedThreadPool(new DedicatedThreadPoolSettings(maxDegreeOfParallelism));
+            pool = new DedicatedThreadPool(new DedicatedThreadPoolSettings(numberOfThreadPoolThreads));
             scheduler = new DedicatedThreadPoolTaskScheduler(pool);
             taskFactory = new TaskFactory(cancellationTokenSource.Token, TaskCreationOptions.None, TaskContinuationOptions.None, scheduler);
         }
 
-        public ActionDispatcher(int maxDegreeOfParallelism = 8, params IActionPipe[] actionPipes)
+        public ActionDispatcher(int numberOfThreadPoolThreads = 8, params IActionPipe[] actionPipes)
         {
             pipes = actionPipes.ToArray();
             cancellationTokenSource = new CancellationTokenSource();
             tasks = new Dictionary<IActionPipe, Task>(pipes.Length);
 
-            pool = new DedicatedThreadPool(new DedicatedThreadPoolSettings(maxDegreeOfParallelism));
+            pool = new DedicatedThreadPool(new DedicatedThreadPoolSettings(numberOfThreadPoolThreads));
             scheduler = new DedicatedThreadPoolTaskScheduler(pool);
             taskFactory = new TaskFactory(cancellationTokenSource.Token, TaskCreationOptions.None, TaskContinuationOptions.None, scheduler);
         }

@@ -25,9 +25,7 @@ namespace WhatNow.Essentials
         public IActionPipeMap Map { get; }
 
         public bool Finished => actions.All(a => a.Value.Finished);
-
         public bool FinishedCurrent => Current.All(a => a.Finished);
-
         public bool BreakRequested => Current.Any(a => a.BreakRequested);
 
         readonly Dictionary<Type, HashSet<TimeSpan>> executions;
@@ -101,7 +99,9 @@ namespace WhatNow.Essentials
 				return Activator.CreateInstance(inType, values);
 			}
 
-			var inValue = inType.FullName.StartsWith("System.ValueTuple") ? GetMultiple(inType.GenericTypeArguments) : GetValue(inType);
+			var inValue = inType.FullName.StartsWith("System.ValueTuple")
+                ? GetMultiple(inType.GenericTypeArguments)
+                : GetValue(inType);
 			var outValue = action.ExecuteUntyped(inValue);
 			if (!(outValue is NullObject))
 			{
