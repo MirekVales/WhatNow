@@ -23,7 +23,17 @@ namespace WhatNow.Essentials
             pool = new DedicatedThreadPool(new DedicatedThreadPoolSettings(maxDegreeOfParallelism));
             scheduler = new DedicatedThreadPoolTaskScheduler(pool);
             taskFactory = new TaskFactory(scheduler);
-            
+
+            cancellationTokenSource = new CancellationTokenSource();
+            tasks = new List<Task>();
+        }
+
+        public TaskList(TaskFactory taskFactory)
+        {
+            pool = null;
+            scheduler = null;
+            this.taskFactory = taskFactory;
+
             cancellationTokenSource = new CancellationTokenSource();
             tasks = new List<Task>();
         }
@@ -37,7 +47,7 @@ namespace WhatNow.Essentials
         public void Cancel()
         {
             cancellationTokenSource.Cancel();
-            pool.Dispose();
+            pool?.Dispose();
         }
 
         public void WaitAllFinished()
@@ -47,7 +57,7 @@ namespace WhatNow.Essentials
         {
             cancellationTokenSource.Cancel();
             cancellationTokenSource.Dispose();
-            pool.Dispose();
+            pool?.Dispose();
         }
     }
 }

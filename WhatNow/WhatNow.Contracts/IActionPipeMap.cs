@@ -4,7 +4,7 @@ using WhatNow.Contracts.Actions;
 
 namespace WhatNow.Contracts
 {
-    public interface IActionPipeMap
+    public interface IActionPipeMap : IEnumerable<Type[]>
     {
         IEnumerable<Type> UsedActionTypes { get; }
 

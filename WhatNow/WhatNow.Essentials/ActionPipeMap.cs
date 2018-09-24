@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using WhatNow.Contracts;
@@ -8,7 +9,7 @@ namespace WhatNow.Essentials
 {
     public class ActionPipeMap : IActionPipeMap
     {
-        readonly HashSet<Tuple<Type, Type>> map = new HashSet<Tuple<Type, Type>>();
+        readonly HashSet<(Type Start, Type End)> map = new HashSet<(Type Start, Type End)>();
         readonly List<Type> types = new List<Type>();
 
         Type[] currentType = new Type[0];
@@ -24,12 +25,12 @@ namespace WhatNow.Essentials
 
         public ActionPipeMap Then<T>()
             where T : IAction
-		{
+        {
             if (types.Contains(typeof(T)))
                 throw new MultipleActionUseException();
 
             foreach (var ctype in currentType)
-                map.Add(Tuple.Create(typeof(T), ctype));
+                map.Add((typeof(T), ctype));
 
             currentType = new Type[] { typeof(T) };
 
@@ -47,8 +48,8 @@ namespace WhatNow.Essentials
 
             foreach (var ctype in currentType)
             {
-                map.Add(Tuple.Create(typeof(T1), ctype));
-                map.Add(Tuple.Create(typeof(T2), ctype));
+                map.Add((typeof(T1), ctype));
+                map.Add((typeof(T2), ctype));
             }
 
             currentType = new Type[] { typeof(T1), typeof(T2) };
@@ -68,9 +69,9 @@ namespace WhatNow.Essentials
 
             foreach (var ctype in currentType)
             {
-                map.Add(Tuple.Create(typeof(T1), ctype));
-                map.Add(Tuple.Create(typeof(T2), ctype));
-                map.Add(Tuple.Create(typeof(T3), ctype));
+                map.Add((typeof(T1), ctype));
+                map.Add((typeof(T2), ctype));
+                map.Add((typeof(T3), ctype));
             }
 
             currentType = new Type[] { typeof(T1), typeof(T2), typeof(T3) };
@@ -81,19 +82,56 @@ namespace WhatNow.Essentials
             return this;
         }
 
+        public ActionPipeMap ThenParallely<T1, T2, T3, T4>()
+            where T1 : IAction
+            where T2 : IAction
+            where T3 : IAction
+            where T4 : IAction
+        {
+            if (types.Contains(typeof(T1))
+                || types.Contains(typeof(T2))
+                || types.Contains(typeof(T3))
+                || types.Contains(typeof(T4)))
+                throw new MultipleActionUseException();
+
+            foreach (var ctype in currentType)
+            {
+                map.Add((typeof(T1), ctype));
+                map.Add((typeof(T2), ctype));
+                map.Add((typeof(T3), ctype));
+                map.Add((typeof(T4), ctype));
+            }
+
+            currentType = new Type[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4) };
+            types.Add(typeof(T1));
+            types.Add(typeof(T2));
+            types.Add(typeof(T3));
+            types.Add(typeof(T4));
+
+            return this;
+        }
+
+        public IEnumerable<Type> GetEntryPoints()
+            => map
+            .Where(p => !map.Any(m => m.End == p.Start))
+            .Select(m => m.Start);
+
         public IEnumerable<Type> GetNext(IEnumerable<IAction> currents)
+            => GetNext(currents.Select(c => c.GetType()));
+
+        public IEnumerable<Type> GetNext(IEnumerable<Type> currents)
         {
             if (!currents.Any())
-                yield return types.Except(map.Select(m => m.Item1)).Single();
+                yield return types.Except(map.Select(m => m.Start)).Single();
             else
                 foreach (var next in currents.SelectMany(GetNext).Distinct())
                     yield return next;
         }
 
-        IEnumerable<Type> GetNext(IAction current)
+        IEnumerable<Type> GetNext(Type current)
             => map
-                .Where(p => p.Item2 == current.GetType())
-                .Select(p => p.Item1)
+                .Where(p => p.End == current)
+                .Select(p => p.Start)
                 .ToArray();
 
         public int ComparePosition(Type t1, Type t2)
@@ -117,5 +155,18 @@ namespace WhatNow.Essentials
             => types.IndexOf(t);
 
         public IEnumerable<Type> UsedActionTypes => types.ToArray();
+
+        public IEnumerator<Type[]> GetEnumerator()
+        {
+            var nextPoints = GetEntryPoints();
+            do
+            {
+                yield return nextPoints.ToArray();
+            }
+            while ((nextPoints = GetNext(nextPoints)).Any());
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+           => GetEnumerator();
     }
 }
