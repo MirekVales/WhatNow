@@ -16,7 +16,8 @@ namespace WhatNow.Essentials
 
         readonly DedicatedThreadPool pool;
         readonly DedicatedThreadPoolTaskScheduler scheduler;
-        readonly TaskFactory taskFactory;
+
+        public TaskFactory TaskFactory { get; private set; }
 
         public IReadOnlyCollection<IActionPipe> Pipes => pipes.ToArray();
 
@@ -28,7 +29,7 @@ namespace WhatNow.Essentials
 
             pool = new DedicatedThreadPool(new DedicatedThreadPoolSettings(numberOfThreadPoolThreads));
             scheduler = new DedicatedThreadPoolTaskScheduler(pool);
-            taskFactory = new TaskFactory(cancellationTokenSource.Token, TaskCreationOptions.None, TaskContinuationOptions.None, scheduler);
+            TaskFactory = new TaskFactory(cancellationTokenSource.Token, TaskCreationOptions.None, TaskContinuationOptions.None, scheduler);
         }
 
         public ActionDispatcher(int numberOfThreadPoolThreads = 8, params IActionPipe[] actionPipes)
@@ -39,7 +40,7 @@ namespace WhatNow.Essentials
 
             pool = new DedicatedThreadPool(new DedicatedThreadPoolSettings(numberOfThreadPoolThreads));
             scheduler = new DedicatedThreadPoolTaskScheduler(pool);
-            taskFactory = new TaskFactory(cancellationTokenSource.Token, TaskCreationOptions.None, TaskContinuationOptions.None, scheduler);
+            TaskFactory = new TaskFactory(cancellationTokenSource.Token, TaskCreationOptions.None, TaskContinuationOptions.None, scheduler);
         }
 
         public void DoEvents()
@@ -52,7 +53,7 @@ namespace WhatNow.Essentials
                 if (tasks.ContainsKey(pipe) && !tasks[pipe].IsCompleted)
                     continue;
 
-                if (pipe.TryGetNextTask(taskFactory, out Task task))
+                if (pipe.TryGetNextTask(TaskFactory, out Task task))
                 {
                     tasks[pipe] = task;
                 }
