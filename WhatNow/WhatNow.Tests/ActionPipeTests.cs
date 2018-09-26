@@ -12,9 +12,7 @@ namespace WhatNow.Tests
 	public class ActionPipeTests
 	{
 		ActionPipeMap map;
-
 		TaskFactory taskFactory;
-
 		ActionToken token;
 
 		[TestInitialize]
@@ -32,11 +30,13 @@ namespace WhatNow.Tests
 		[TestMethod]
 		public void ProcessesActions()
 		{
-			var pipe = new ActionPipe(map, token, new TransientDependencyResolver());
-			Assert.IsFalse(pipe.BreakRequested);
+            var pipe = new ActionPipe(map, token, new TransientDependencyResolver());
+
+            Assert.IsFalse(pipe.BreakRequested);
 			Assert.IsFalse(pipe.Finished);
 			Assert.IsTrue(pipe.FinishedCurrent);
 			Assert.AreEqual(0, pipe.Current.Length);
+            Assert.AreEqual(2, map.MaxDegreeOfParallelism);
 
 			Assert.IsTrue(pipe.TryGetNextTask(taskFactory, out Task t1));
 			t1.Wait();
@@ -69,7 +69,6 @@ namespace WhatNow.Tests
 				.StartsAt<DummyAction1>()
 				.Then<DummyAction1B>()
 				.Then<DummyMultipleIn>();
-
 
 			var pipe = new ActionPipe(localMap, token, new TransientDependencyResolver());
 			Assert.IsTrue(pipe.TryGetNextTask(taskFactory, out Task t1));

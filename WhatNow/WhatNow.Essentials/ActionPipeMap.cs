@@ -156,6 +156,9 @@ namespace WhatNow.Essentials
 
         public IEnumerable<Type> UsedActionTypes => types.ToArray();
 
+        public int MaxDegreeOfParallelism
+            => types.Max(t => map.Count(m => m.End == t));
+
         public IEnumerator<Type[]> GetEnumerator()
         {
             var nextPoints = GetEntryPoints();

@@ -6,6 +6,8 @@ namespace WhatNow.Contracts
 {
     public interface IActionPipeMap : IEnumerable<Type[]>
     {
+        int MaxDegreeOfParallelism { get; }
+
         IEnumerable<Type> UsedActionTypes { get; }
 
         IEnumerable<Type> GetNext(IEnumerable<IAction> currents);
