@@ -15,8 +15,7 @@ namespace WhatNow.Essentials
         readonly Dictionary<IActionPipe, Task> tasks;
 
         readonly DedicatedThreadPool pool;
-        readonly DedicatedThreadPoolTaskScheduler scheduler;
-
+        public DedicatedThreadPoolTaskScheduler Scheduler { get; private set; }
         public TaskFactory TaskFactory { get; private set; }
 
         public IReadOnlyCollection<IActionPipe> Pipes => pipes.ToArray();
@@ -26,10 +25,10 @@ namespace WhatNow.Essentials
             pipes = actionPipes.ToArray();
             cancellationTokenSource = new CancellationTokenSource();
             tasks = new Dictionary<IActionPipe, Task>(pipes.Length);
-
+            
             pool = new DedicatedThreadPool(new DedicatedThreadPoolSettings(numberOfThreadPoolThreads));
-            scheduler = new DedicatedThreadPoolTaskScheduler(pool);
-            TaskFactory = new TaskFactory(cancellationTokenSource.Token, TaskCreationOptions.None, TaskContinuationOptions.None, scheduler);
+            Scheduler = new DedicatedThreadPoolTaskScheduler(pool);
+            TaskFactory = new TaskFactory(cancellationTokenSource.Token, TaskCreationOptions.None, TaskContinuationOptions.None, Scheduler);
         }
 
         public ActionDispatcher(int numberOfThreadPoolThreads = 8, params IActionPipe[] actionPipes)
@@ -39,8 +38,8 @@ namespace WhatNow.Essentials
             tasks = new Dictionary<IActionPipe, Task>(pipes.Length);
 
             pool = new DedicatedThreadPool(new DedicatedThreadPoolSettings(numberOfThreadPoolThreads));
-            scheduler = new DedicatedThreadPoolTaskScheduler(pool);
-            TaskFactory = new TaskFactory(cancellationTokenSource.Token, TaskCreationOptions.None, TaskContinuationOptions.None, scheduler);
+            Scheduler = new DedicatedThreadPoolTaskScheduler(pool);
+            TaskFactory = new TaskFactory(cancellationTokenSource.Token, TaskCreationOptions.None, TaskContinuationOptions.None, Scheduler);
         }
 
         public void DoEvents()

@@ -17,7 +17,7 @@ namespace WhatNow.Essentials
 
         public int TasksCount
             => tasks.Count;
-
+        
         public TaskList(int maxDegreeOfParallelism)
         {
             pool = new DedicatedThreadPool(new DedicatedThreadPoolSettings(maxDegreeOfParallelism));
