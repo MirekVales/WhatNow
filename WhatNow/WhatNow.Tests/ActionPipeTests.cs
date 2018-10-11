@@ -59,7 +59,7 @@ namespace WhatNow.Tests
 			Assert.AreEqual(0, pipe.Current.Length);
 
 			Assert.AreEqual(4, token.Get<DummyType>().Property);
-			Assert.AreEqual(4, pipe.ProcessingStats.Count());
+			Assert.AreEqual(4, pipe.ProcessingStats.Items.Count());
 		}
 
 		[TestMethod]

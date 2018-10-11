@@ -116,8 +116,8 @@ namespace WhatNow.Essentials
             }
         }
 
-        public IEnumerable<ProcessingStatisticsItem> ProcessingStats
-            => GetProcessingStats();
+        public ProcessingStatistics ProcessingStats
+            => new ProcessingStatistics(GetProcessingStats());
 
         IEnumerable<ProcessingStatisticsItem> GetProcessingStats()
         {
