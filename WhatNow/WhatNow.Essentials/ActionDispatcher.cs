@@ -31,7 +31,10 @@ namespace WhatNow.Essentials
             TaskFactory = new TaskFactory(cancellationTokenSource.Token, TaskCreationOptions.None, TaskContinuationOptions.None, Scheduler);
         }
 
-        public ActionDispatcher(int numberOfThreadPoolThreads = 8, params IActionPipe[] actionPipes)
+        public ActionDispatcher(
+            int numberOfThreadPoolThreads = 8
+            , TaskCreationOptions taskCreationOptions = TaskCreationOptions.None
+            , params IActionPipe[] actionPipes)
         {
             pipes = actionPipes.ToArray();
             cancellationTokenSource = new CancellationTokenSource();
@@ -39,7 +42,7 @@ namespace WhatNow.Essentials
 
             pool = new DedicatedThreadPool(new DedicatedThreadPoolSettings(numberOfThreadPoolThreads));
             Scheduler = new DedicatedThreadPoolTaskScheduler(pool);
-            TaskFactory = new TaskFactory(cancellationTokenSource.Token, TaskCreationOptions.None, TaskContinuationOptions.None, Scheduler);
+            TaskFactory = new TaskFactory(cancellationTokenSource.Token, taskCreationOptions, TaskContinuationOptions.None, Scheduler);
         }
 
         public void DoEvents()

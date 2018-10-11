@@ -13,7 +13,7 @@ namespace WhatNow.Contracts
         bool FinishedCurrent { get; }
 		IAction[] Next { get; }
         IEnumerable<BreakRequestReason> BreakReasons { get; }
-        IEnumerable<ProcessingStatistics> ProcessingStats { get; }
+        IEnumerable<ProcessingStatisticsItem> ProcessingStats { get; }
 
         bool TryGetNextTask(TaskFactory taskFactory, out Task task);
 

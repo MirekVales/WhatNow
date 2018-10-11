@@ -1,23 +1,40 @@
 ﻿using System;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace WhatNow.Contracts
 {
     public class ProcessingStatistics
     {
-        public Type ActionType { get; }
-        public int LocationInActionMap { get; }
-        public int ExecutionCount { get; }
-        public TimeSpan AverageDuration { get; }
+        public IEnumerable<ProcessingStatisticsItem> Items { get; }
 
-        public ProcessingStatistics(Type actionType, int location, int executionCount, TimeSpan duration)
+        public TimeSpan TotalTime
+            => TimeSpan.FromMilliseconds(
+                Items.Sum(i => i.ExecutionCount * i.AverageDuration.TotalMilliseconds));
+        public int TotalExecutions
+            => Items.Max(i => i.ExecutionCount);
+        public bool IsFullyProcessed
+            => Items
+            .OrderByDescending(i => i.LocationInActionMap)
+            .FirstOrDefault()
+            ?.ExecutionCount > 0;
+        public bool HasConsistentExecutionCounts
+            => Items.Count() < 2
+            || Items.All(i => i.ExecutionCount == Items.First().ExecutionCount);
+
+        public ProcessingStatistics(IEnumerable<ProcessingStatisticsItem> items)
         {
-            ActionType = actionType;
-            LocationInActionMap = location;
-            ExecutionCount = executionCount;
-            AverageDuration = duration;
+            Items = items.ToArray();
         }
 
+        char Mark(bool b)
+            => b ? 'x' : 'o';
+
         public override string ToString()
-            => $"[{LocationInActionMap}] {ActionType.Name} ({ExecutionCount} @ {AverageDuration})";
+        {
+            return $"{TotalTime} [{Mark(IsFullyProcessed)}|{Mark(HasConsistentExecutionCounts)}]"
+                + Environment.NewLine
+                + string.Join(Environment.NewLine, Items.OrderBy(i => i.LocationInActionMap).Select(i => i.ToString()));
+        }
     }
 }

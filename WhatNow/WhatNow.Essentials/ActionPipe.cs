@@ -10,11 +10,11 @@ namespace WhatNow.Essentials
 {
     public class ActionPipe : IActionPipe
     {
-		readonly ActionToken actionToken;
+        readonly ActionToken actionToken;
 
-		readonly IDependencyResolver dependencyResolver;
+        readonly IDependencyResolver dependencyResolver;
 
-		Dictionary<Type, IAction> actions;
+        Dictionary<Type, IAction> actions;
 
         public IAction[] Current { get; private set; }
         public IAction[] Next => Map
@@ -28,6 +28,7 @@ namespace WhatNow.Essentials
         public bool FinishedCurrent => Current.All(a => a.Finished);
         public bool BreakRequested => Current.Any(a => a.BreakRequested);
 
+        readonly object executionsLock = new object();
         readonly Dictionary<Type, HashSet<TimeSpan>> executions;
 
         public IEnumerable<BreakRequestReason> BreakReasons => actions
@@ -37,9 +38,9 @@ namespace WhatNow.Essentials
 
         public ActionPipe(IActionPipeMap map, ActionToken actionToken, IDependencyResolver dependencyResolver)
         {
-			this.actionToken = actionToken;
-			this.dependencyResolver = dependencyResolver;
-			Map = map;
+            this.actionToken = actionToken;
+            this.dependencyResolver = dependencyResolver;
+            Map = map;
 
             actions = map
                 .UsedActionTypes
@@ -57,9 +58,9 @@ namespace WhatNow.Essentials
 
             actions = Map
                 .UsedActionTypes
-				.ToDictionary(k => k, t => (IAction)dependencyResolver.Resolve(t));
+                .ToDictionary(k => k, t => (IAction)dependencyResolver.Resolve(t));
 
-			Current = new IAction[0];
+            Current = new IAction[0];
         }
 
         public bool TryGetNextTask(TaskFactory taskFactory, out Task task)
@@ -75,10 +76,10 @@ namespace WhatNow.Essentials
 
                 var tasks = Current.Select(c => taskFactory.StartNew(() =>
                 {
-					using (new BlockStopwatch(t => executions[c.GetType()].Add(t)))
-					{
-						ExecuteAction(c);
-					}
+                    using (new BlockStopwatch(t => WriteExecutionTime(c.GetType(), t)))
+                    {
+                        ExecuteAction(c);
+                    }
                 }));
                 task = Task.WhenAll(tasks);
                 return true;
@@ -86,37 +87,43 @@ namespace WhatNow.Essentials
             return false;
         }
 
-		void ExecuteAction(IAction action)
-		{
-			var inType = action.InputType;
-			
-			object GetValue(Type type) => 
-				type == typeof(NullObject) ? NullObject.Value : actionToken.Get(type);
+        void WriteExecutionTime(Type type, TimeSpan time)
+        {
+            lock (executionsLock)
+                executions[type].Add(time);
+        }
 
-			object GetMultiple(Type[] types)
-			{
-				var values = types.Select(GetValue).ToArray();
-				return Activator.CreateInstance(inType, values);
-			}
+        void ExecuteAction(IAction action)
+        {
+            var inType = action.InputType;
 
-			var inValue = inType.FullName.StartsWith("System.ValueTuple")
+            object GetValue(Type type) =>
+                type == typeof(NullObject) ? NullObject.Value : actionToken.Get(type);
+
+            object GetMultiple(Type[] types)
+            {
+                var values = types.Select(GetValue).ToArray();
+                return Activator.CreateInstance(inType, values);
+            }
+
+            var inValue = inType.FullName.StartsWith("System.ValueTuple")
                 ? GetMultiple(inType.GenericTypeArguments)
                 : GetValue(inType);
-			var outValue = action.ExecuteUntyped(inValue);
-			if (!(outValue is NullObject))
-			{
-				actionToken.Set(outValue);
-			}
-		}
+            var outValue = action.ExecuteUntyped(inValue);
+            if (!(outValue is NullObject))
+            {
+                actionToken.Set(outValue);
+            }
+        }
 
-        public IEnumerable<ProcessingStatistics> ProcessingStats
+        public IEnumerable<ProcessingStatisticsItem> ProcessingStats
             => GetProcessingStats();
 
-        IEnumerable<ProcessingStatistics> GetProcessingStats()
+        IEnumerable<ProcessingStatisticsItem> GetProcessingStats()
         {
             foreach (var type in executions)
             {
-                yield return new ProcessingStatistics(
+                yield return new ProcessingStatisticsItem(
                     type.Key,
                     Map.GetPosition(type.Key),
                     type.Value.Count,
