@@ -9,7 +9,7 @@ namespace WhatNow.Essentials
 {
     public class ActionPipeMap : IActionPipeMap
     {
-        readonly HashSet<(Type Start, Type End)> map = new HashSet<(Type Start, Type End)>();
+        readonly HashSet<(Type End, Type Start)> map = new HashSet<(Type End, Type Start)>();
         readonly List<Type> types = new List<Type>();
 
         Type[] currentType = new Type[0];
@@ -122,7 +122,7 @@ namespace WhatNow.Essentials
         public IEnumerable<Type> GetNext(IEnumerable<Type> currents)
         {
             if (!currents.Any())
-                yield return types.Except(map.Select(m => m.Start)).Single();
+                yield return types.Except(map.Select(m => m.End)).Single();
             else
                 foreach (var next in currents.SelectMany(GetNext).Distinct())
                     yield return next;
@@ -130,8 +130,8 @@ namespace WhatNow.Essentials
 
         public IEnumerable<Type> GetNext(Type current)
             => map
-                .Where(p => p.End == current)
-                .Select(p => p.Start)
+                .Where(p => p.Start == current)
+                .Select(p => p.End)
                 .ToArray();
 
         public int ComparePosition(Type t1, Type t2)
@@ -157,7 +157,18 @@ namespace WhatNow.Essentials
         public IEnumerable<Type> UsedActionTypes => types.ToArray();
 
         public int MaxDegreeOfParallelism
-            => types.Max(t => map.Count(m => m.End == t));
+            => types.Max(t => map.Count(m => m.Start == t));
+
+        public int GetDegreeOfParallelism(Type t)
+        {
+            var parent = map.FirstOrDefault(m => m.End == t);
+            if (parent == default)
+                return 1;
+
+            return map
+                .Where(m => m.Start == parent.End)
+                .Count();
+        }
 
         public IEnumerator<Type[]> GetEnumerator()
         {
