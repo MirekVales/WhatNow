@@ -128,7 +128,7 @@ namespace WhatNow.Essentials
                     yield return next;
         }
 
-        IEnumerable<Type> GetNext(Type current)
+        public IEnumerable<Type> GetNext(Type current)
             => map
                 .Where(p => p.End == current)
                 .Select(p => p.Start)

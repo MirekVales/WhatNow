@@ -24,6 +24,7 @@
   <ItemGroup>
     <ProjectReference Include="..\WhatNow.Contracts\WhatNow.Contracts.csproj" />
     <ProjectReference Include="..\WhatNow.Essentials\WhatNow.Essentials.csproj" />
+    <ProjectReference Include="..\WhatNow.Visualization\WhatNow.Visualization.csproj" />
   </ItemGroup>
 
 </Project>

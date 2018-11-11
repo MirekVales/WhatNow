@@ -10,7 +10,11 @@ namespace WhatNow.Contracts
 
         IEnumerable<Type> UsedActionTypes { get; }
 
+        IEnumerable<Type> GetEntryPoints();
+
         IEnumerable<Type> GetNext(IEnumerable<IAction> currents);
+
+        IEnumerable<Type> GetNext(Type current);
 
         int ComparePosition(Type t1, Type t2);
 

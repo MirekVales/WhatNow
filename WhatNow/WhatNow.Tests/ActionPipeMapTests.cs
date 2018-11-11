@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Linq;
 using WhatNow.Contracts;
 using WhatNow.Contracts.Actions;
