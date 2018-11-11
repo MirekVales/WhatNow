@@ -1,16 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using WhatNow.Contracts;
+using WhatNow.Contracts.Data;
+using System.Threading.Tasks;
 using WhatNow.Contracts.Actions;
+using System.Collections.Generic;
 using WhatNow.Contracts.Dependency;
 
 namespace WhatNow.Essentials
 {
     public class ActionPipe : IActionPipe
     {
-        readonly ActionToken actionToken;
+        public ActionToken ActionToken { get; }
 
         readonly IDependencyResolver dependencyResolver;
 
@@ -25,7 +26,7 @@ namespace WhatNow.Essentials
         public IActionPipeMap Map { get; }
 
         public bool Finished => actions.All(a => a.Value.Finished);
-        public bool FinishedCurrent => Current.All(a => a.Finished);
+        public bool CurrentActionsFinished => Current.All(a => a.Finished);
         public bool BreakRequested => Current.Any(a => a.BreakRequested);
 
         readonly object executionsLock = new object();
@@ -38,7 +39,7 @@ namespace WhatNow.Essentials
 
         public ActionPipe(IActionPipeMap map, ActionToken actionToken, IDependencyResolver dependencyResolver)
         {
-            this.actionToken = actionToken;
+            ActionToken = actionToken;
             this.dependencyResolver = dependencyResolver;
             Map = map;
 
@@ -48,7 +49,7 @@ namespace WhatNow.Essentials
 
             Current = new IAction[0];
 
-            executions = actions.Keys.ToDictionary(k => k, v => new HashSet<TimeSpan>());
+            executions = actions.Keys.ToDictionary(k => k, _ => new HashSet<TimeSpan>());
         }
 
         public void Restart()
@@ -67,7 +68,7 @@ namespace WhatNow.Essentials
         {
             task = null;
 
-            if (!BreakRequested && FinishedCurrent)
+            if (!BreakRequested && CurrentActionsFinished)
             {
                 Current = Next;
 
@@ -98,7 +99,7 @@ namespace WhatNow.Essentials
             var inType = action.InputType;
 
             object GetValue(Type type) =>
-                type == typeof(NullObject) ? NullObject.Value : actionToken.Get(type);
+                type == typeof(NullObject) ? NullObject.Value : ActionToken.Get(type);
 
             object GetMultiple(Type[] types)
             {
@@ -112,7 +113,7 @@ namespace WhatNow.Essentials
             var outValue = action.ExecuteUntyped(inValue);
             if (!(outValue is NullObject))
             {
-                actionToken.Set(outValue);
+                ActionToken.Set(outValue, action.OutputType, ItemLifespan.SingleRun);
             }
         }
 
@@ -127,9 +128,13 @@ namespace WhatNow.Essentials
                     type.Key,
                     Map.GetPosition(type.Key),
                     type.Value.Count,
-                    type.Value.Any()
-                    ? TimeSpan.FromMilliseconds(type.Value.Select(v => v.TotalMilliseconds).Average())
-                    : TimeSpan.Zero);
+                    TimeSpan.FromMilliseconds(
+                        type
+                        .Value
+                        .Select(v => v.TotalMilliseconds)
+                        .DefaultIfEmpty(0)
+                        .Average())
+                    );
             }
         }
     }

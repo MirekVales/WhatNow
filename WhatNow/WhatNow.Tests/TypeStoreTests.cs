@@ -1,5 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using WhatNow.Contracts;
+using WhatNow.Contracts.Data;
 
 namespace WhatNow.Tests
 {
@@ -17,7 +17,7 @@ namespace WhatNow.Tests
         public void StoresDataPositive()
         {
             var value = 1;
-            store.Set(value);
+            store.Set(value, ItemLifespan.Permanent);
 
             Assert.AreEqual(value, store.Get<int>());
             Assert.IsTrue(store.Contains<int>());
@@ -37,7 +37,7 @@ namespace WhatNow.Tests
         public void UpdatesData()
         {
             var value = new DummyType() { Property = 1};
-            store.Set(value);
+            store.Set(value, ItemLifespan.Permanent);
             store.Do<DummyType>(d => d.Property = 2);
 
             Assert.AreEqual(store.Get<DummyType>().Property, 2);
