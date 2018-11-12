@@ -162,12 +162,10 @@ namespace WhatNow.Essentials
         public int GetDegreeOfParallelism(Type t)
         {
             var parent = map.FirstOrDefault(m => m.End == t);
-            if (parent == default)
+            if (parent.Equals(default((Type End, Type Start))))
                 return 1;
 
-            return map
-                .Where(m => m.Start == parent.End)
-                .Count();
+            return map.Count(m => m.Start == parent.End);
         }
 
         public IEnumerator<Type[]> GetEnumerator()
