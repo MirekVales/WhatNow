@@ -1,6 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using WhatNow.Contracts;
 using WhatNow.Contracts.Actions;
+using WhatNow.Contracts.Resources;
+using WhatNow.Essentials.Resources;
 
 namespace WhatNow.Tests
 {
@@ -9,11 +11,13 @@ namespace WhatNow.Tests
     {
         readonly DummyAction action;
         readonly DummyAction action2;
+        readonly IResourceManager resourceManager;
 
         public ActionBaseTests()
         {
             action = new DummyAction(false);
             action2 = new DummyAction(true);
+            resourceManager = new ResourceManager();
         }
 
         [TestMethod]
@@ -21,7 +25,7 @@ namespace WhatNow.Tests
         {
             Assert.IsFalse(action.Finished);
             Assert.IsFalse(action.BreakRequested);
-			var result = action.ExecuteUntyped(NullObject.Value);
+			var result = action.ExecuteUntyped(resourceManager, NullObject.Value);
             Assert.AreEqual("Finished", result);
             Assert.IsTrue(action.Finished);
             Assert.IsFalse(action.BreakRequested);
@@ -32,7 +36,7 @@ namespace WhatNow.Tests
         {
             Assert.IsFalse(action2.Finished);
             Assert.IsFalse(action2.BreakRequested);
-			var result = action2.ExecuteUntyped(NullObject.Value);
+			var result = action2.ExecuteUntyped(resourceManager, NullObject.Value);
 			Assert.AreEqual("BreakRequested", result);
             Assert.IsTrue(action2.Finished);
             Assert.IsTrue(action2.BreakRequested);

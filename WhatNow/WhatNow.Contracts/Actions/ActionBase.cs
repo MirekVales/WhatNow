@@ -1,10 +1,13 @@
 ﻿using System;
+using WhatNow.Contracts.Resources;
 
 namespace WhatNow.Contracts.Actions
 {
-	public abstract class ActionBase<TInput, TOutput> : IAction
-    { 
+    public abstract class ActionBase<TInput, TOutput> : IAction
+    {
         protected readonly object accessLock = new object();
+
+        IResourceManager resourceManager;
 
         bool breakRequested;
         BreakRequestReason breakRequestReason;
@@ -28,32 +31,39 @@ namespace WhatNow.Contracts.Actions
 
         private protected abstract TOutput DoExecuteAction(TInput input);
 
-		/// <summary>
-		/// Executes the action without generic type input, output. Not intended to be called outside of the framework
-		/// </summary>
-		public object ExecuteUntyped(object input)
+        /// <summary>
+        /// Executes the action without generic type input, output. Not intended to be called outside of the framework
+        /// </summary>
+        public object ExecuteUntyped(IResourceManager resourceManager, object input)
         {
-            try
+            using (resourceManager.CreateUseScope(instance => this.resourceManager = instance))
             {
-                var output = DoExecuteAction((TInput)input);
-				Finished = true;
-				return output;
-			}
-			catch (Exception e)
-            {
-                RequestBreak(new BreakRequestException(GetType(), e));
-                return NullObject.Value;
+                try
+                {
+                    var output = DoExecuteAction((TInput)input);
+                    Finished = true;
+                    return output;
+                }
+                catch (Exception e)
+                {
+                    RequestBreak(new BreakRequestException(GetType(), e));
+                    return NullObject.Value;
+                }
             }
         }
 
-		public Type InputType => typeof(TInput);
+        public Type InputType => typeof(TInput);
 
-		public Type OutputType => typeof(TOutput);
+        public Type OutputType => typeof(TOutput);
 
-		protected void RequestBreak(BreakRequestReason reason)
+        protected void RequestBreak(BreakRequestReason reason)
         {
             BreakRequestReason = reason;
             BreakRequested = true;
         }
+
+        public T Access<T>(Enum resourceId)
+            where T : IAccessableResource
+            => resourceManager.Access<T>(resourceId).Resource;
     }
 }

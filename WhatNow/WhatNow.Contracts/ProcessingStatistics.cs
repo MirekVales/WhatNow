@@ -11,13 +11,16 @@ namespace WhatNow.Contracts
         public TimeSpan TotalTime
             => TimeSpan.FromMilliseconds(
                 Items.Sum(i => i.ExecutionCount * i.AverageDuration.TotalMilliseconds));
+
         public int TotalExecutions
             => Items.Max(i => i.ExecutionCount);
+
         public bool IsFullyProcessed
             => Items
             .OrderByDescending(i => i.LocationInActionMap)
             .FirstOrDefault()
             ?.ExecutionCount > 0;
+
         public bool HasConsistentExecutionCounts
             => Items.Count() < 2
             || Items.All(i => i.ExecutionCount == Items.First().ExecutionCount);

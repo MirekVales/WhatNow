@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using WhatNow.Contracts.Actions;
 using WhatNow.Contracts.Data;
+using WhatNow.Contracts.Resources;
 
 namespace WhatNow.Contracts
 {
@@ -17,7 +18,7 @@ namespace WhatNow.Contracts
         IEnumerable<BreakRequestReason> BreakReasons { get; }
         ProcessingStatistics ProcessingStats { get; }
 
-        bool TryGetNextTask(TaskFactory taskFactory, out Task task);
+        bool TryGetNextTask(IResourceManager resourceManager, TaskFactory taskFactory, out Task task);
 
         void Restart();
     }

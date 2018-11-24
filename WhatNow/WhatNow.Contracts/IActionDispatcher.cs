@@ -9,5 +9,6 @@ namespace WhatNow.Contracts
         bool EndedByBreak { get; }
         bool IsFinished { get; }
         void DoEvents();
+        void Restart();
     }
 }

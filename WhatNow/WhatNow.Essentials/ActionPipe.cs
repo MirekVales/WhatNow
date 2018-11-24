@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using WhatNow.Contracts.Actions;
 using System.Collections.Generic;
 using WhatNow.Contracts.Dependency;
+using WhatNow.Contracts.Resources;
 
 namespace WhatNow.Essentials
 {
@@ -30,7 +31,7 @@ namespace WhatNow.Essentials
         public bool BreakRequested => Current.Any(a => a.BreakRequested);
 
         readonly object executionsLock = new object();
-        readonly Dictionary<Type, HashSet<TimeSpan>> executions;
+        readonly Dictionary<Type, Queue<TimeSpan>> executions;
 
         public IEnumerable<BreakRequestReason> BreakReasons => actions
             .Select(a => a.Value.BreakRequestReason)
@@ -49,7 +50,7 @@ namespace WhatNow.Essentials
 
             Current = new IAction[0];
 
-            executions = actions.Keys.ToDictionary(k => k, _ => new HashSet<TimeSpan>());
+            executions = actions.Keys.ToDictionary(k => k, _ => new Queue<TimeSpan>());
         }
 
         public void Restart()
@@ -64,7 +65,7 @@ namespace WhatNow.Essentials
             Current = new IAction[0];
         }
 
-        public bool TryGetNextTask(TaskFactory taskFactory, out Task task)
+        public bool TryGetNextTask(IResourceManager resourceManager, TaskFactory taskFactory, out Task task)
         {
             task = null;
 
@@ -79,7 +80,7 @@ namespace WhatNow.Essentials
                 {
                     using (new BlockStopwatch(t => WriteExecutionTime(c.GetType(), t)))
                     {
-                        ExecuteAction(c);
+                        ExecuteAction(resourceManager, c);
                     }
                 }));
                 task = Task.WhenAll(tasks);
@@ -91,10 +92,10 @@ namespace WhatNow.Essentials
         void WriteExecutionTime(Type type, TimeSpan time)
         {
             lock (executionsLock)
-                executions[type].Add(time);
+                executions[type].Enqueue(time);
         }
 
-        void ExecuteAction(IAction action)
+        void ExecuteAction(IResourceManager resourceManager, IAction action)
         {
             var inType = action.InputType;
 
@@ -110,7 +111,7 @@ namespace WhatNow.Essentials
             var inValue = inType.FullName.StartsWith("System.ValueTuple")
                 ? GetMultiple(inType.GenericTypeArguments)
                 : GetValue(inType);
-            var outValue = action.ExecuteUntyped(inValue);
+            var outValue = action.ExecuteUntyped(resourceManager, inValue);
             if (!(outValue is NullObject))
             {
                 ActionToken.Set(outValue, action.OutputType, ItemLifespan.SingleRun);

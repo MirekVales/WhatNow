@@ -3,10 +3,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Helios.Concurrency;
+using WhatNow.Contracts;
 
 namespace WhatNow.Essentials
 {
-    public class TaskList : IDisposable
+    public class TaskList : ITaskList
     {
         readonly CancellationTokenSource cancellationTokenSource;
         readonly List<Task> tasks;
@@ -17,7 +18,7 @@ namespace WhatNow.Essentials
 
         public int TasksCount
             => tasks.Count;
-        
+
         public TaskList(int maxDegreeOfParallelism)
         {
             pool = new DedicatedThreadPool(new DedicatedThreadPoolSettings(maxDegreeOfParallelism));
@@ -38,9 +39,17 @@ namespace WhatNow.Essentials
             tasks = new List<Task>();
         }
 
-        public TaskList With(Action action)
+        public ITaskList With(Action action)
         {
             tasks.Add(taskFactory.StartNew(action, cancellationTokenSource.Token));
+            return this;
+        }
+
+        public ITaskList With(IEnumerable<Action> actions)
+        {
+            foreach (var action in actions)
+                tasks.Add(taskFactory.StartNew(action, cancellationTokenSource.Token));
+
             return this;
         }
 

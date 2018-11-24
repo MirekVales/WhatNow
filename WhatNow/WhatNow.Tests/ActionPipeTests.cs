@@ -5,8 +5,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using WhatNow.Contracts.Actions;
 using WhatNow.Contracts.Data;
+using WhatNow.Contracts.Resources;
 using WhatNow.Essentials;
 using WhatNow.Essentials.Dependency;
+using WhatNow.Essentials.Resources;
 
 namespace WhatNow.Tests
 {
@@ -16,10 +18,12 @@ namespace WhatNow.Tests
         ActionPipeMap map;
         TaskFactory taskFactory;
         ActionToken token;
+        IResourceManager resourceManager;
 
         [TestInitialize]
         public void Init()
         {
+            resourceManager = new ResourceManager();
             map = new ActionPipeMap()
                 .StartsAt<DummyAction1>()
                 .Then<DummyAction2>()
@@ -40,15 +44,15 @@ namespace WhatNow.Tests
             Assert.AreEqual(0, pipe.Current.Length);
             Assert.AreEqual(2, map.MaxDegreeOfParallelism);
 
-            Assert.IsTrue(pipe.TryGetNextTask(taskFactory, out Task t1));
+            Assert.IsTrue(pipe.TryGetNextTask(resourceManager, taskFactory, out Task t1));
             t1.Wait();
             Assert.AreEqual(1, pipe.Current.Length);
             Assert.AreEqual(typeof(DummyAction1), pipe.Current[0].GetType());
-            Assert.IsTrue(pipe.TryGetNextTask(taskFactory, out Task t2));
+            Assert.IsTrue(pipe.TryGetNextTask(resourceManager, taskFactory, out Task t2));
             t2.Wait();
             Assert.AreEqual(1, pipe.Current.Length);
             Assert.AreEqual(typeof(DummyAction2), pipe.Current[0].GetType());
-            Assert.IsTrue(pipe.TryGetNextTask(taskFactory, out Task t3));
+            Assert.IsTrue(pipe.TryGetNextTask(resourceManager, taskFactory, out Task t3));
             t3.Wait();
             Assert.AreEqual(2, pipe.Current.Length);
             Assert.AreEqual(typeof(DummyAction3), pipe.Current[0].GetType());
@@ -57,7 +61,7 @@ namespace WhatNow.Tests
             Assert.IsFalse(pipe.BreakRequested);
             Assert.IsTrue(pipe.Finished);
             Assert.IsTrue(pipe.CurrentActionsFinished);
-            Assert.IsFalse(pipe.TryGetNextTask(taskFactory, out Task _));
+            Assert.IsFalse(pipe.TryGetNextTask(resourceManager, taskFactory, out Task _));
             Assert.AreEqual(0, pipe.Current.Length);
 
             Assert.AreEqual(4, token.Get<DummyType>().Property);
@@ -73,21 +77,21 @@ namespace WhatNow.Tests
                 .Then<DummyMultipleIn>();
 
             var pipe = new ActionPipe(localMap, token, new TransientDependencyResolver());
-            Assert.IsTrue(pipe.TryGetNextTask(taskFactory, out Task t1));
+            Assert.IsTrue(pipe.TryGetNextTask(resourceManager, taskFactory, out Task t1));
             t1.Wait();
             Assert.IsTrue(token.Contains<DummyType>());
 
-            Assert.IsTrue(pipe.TryGetNextTask(taskFactory, out Task t2));
+            Assert.IsTrue(pipe.TryGetNextTask(resourceManager, taskFactory, out Task t2));
             t2.Wait();
             Assert.IsTrue(token.Contains<DummyType2>());
 
-            Assert.IsTrue(pipe.TryGetNextTask(taskFactory, out Task t3));
+            Assert.IsTrue(pipe.TryGetNextTask(resourceManager, taskFactory, out Task t3));
             t3.Wait();
 
             Assert.IsFalse(pipe.BreakRequested);
             Assert.IsTrue(pipe.Finished);
             Assert.IsTrue(pipe.CurrentActionsFinished);
-            Assert.IsFalse(pipe.TryGetNextTask(taskFactory, out Task _));
+            Assert.IsFalse(pipe.TryGetNextTask(resourceManager, taskFactory, out Task _));
             Assert.AreEqual(0, pipe.Current.Length);
             Assert.AreEqual("ok", token.Get<string>());
         }
@@ -108,7 +112,7 @@ namespace WhatNow.Tests
             newToken.Set(new DummyType2(), ItemLifespan.SingleRun);
 
             var pipe = new ActionPipe(localMap, newToken, new TransientDependencyResolver());
-            using (var dispatcher = new ActionDispatcher(1, TaskCreationOptions.None, pipe))
+            using (var dispatcher = new ActionDispatcher(ResourcePlan.Empty, 2, TaskCreationOptions.None, pipe))
             {
                 dispatcher.AsyncExecute().Wait();
             }
