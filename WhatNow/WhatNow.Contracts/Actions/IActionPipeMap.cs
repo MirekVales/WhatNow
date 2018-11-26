@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using WhatNow.Contracts.Actions;
 
-namespace WhatNow.Contracts
+namespace WhatNow.Contracts.Actions
 {
     public interface IActionPipeMap : IEnumerable<Type[]>
     {

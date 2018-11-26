@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace WhatNow.Contracts
+namespace WhatNow.Contracts.Exceptions
 {
     public class MultipleActionUseException : Exception
     {

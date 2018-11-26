@@ -16,7 +16,7 @@ namespace WhatNow.Tests
         }
 
         [TestMethod]
-        public void WaitsForResources()
+        public void Accesses()
         {
             var plan = new ResourcePlan()
                 .WithThreadPool(Resource.Threads1, 1)

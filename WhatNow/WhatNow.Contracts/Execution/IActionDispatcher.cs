@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using WhatNow.Contracts.Actions;
 
 namespace WhatNow.Contracts
 {

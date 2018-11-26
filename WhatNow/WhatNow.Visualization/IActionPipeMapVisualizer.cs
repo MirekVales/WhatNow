@@ -1,5 +1,6 @@
 ﻿using System;
 using WhatNow.Contracts;
+using WhatNow.Contracts.Actions;
 
 namespace WhatNow.Visualization
 {

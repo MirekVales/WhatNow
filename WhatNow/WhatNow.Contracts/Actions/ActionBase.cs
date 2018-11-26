@@ -1,4 +1,5 @@
 ﻿using System;
+using WhatNow.Contracts.Exceptions;
 using WhatNow.Contracts.Resources;
 
 namespace WhatNow.Contracts.Actions

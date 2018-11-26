@@ -1,6 +1,7 @@
 ﻿using System;
+using WhatNow.Contracts.Actions;
 
-namespace WhatNow.Contracts
+namespace WhatNow.Contracts.Exceptions
 {
     public class BreakRequestException : BreakRequestReason
     {

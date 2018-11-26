@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using WhatNow.Contracts.Actions;
 using WhatNow.Contracts.Data;
 using WhatNow.Contracts.Resources;
+using WhatNow.Contracts.Statistics;
 
-namespace WhatNow.Contracts
+namespace WhatNow.Contracts.Actions
 {
     public interface IActionPipe
     {

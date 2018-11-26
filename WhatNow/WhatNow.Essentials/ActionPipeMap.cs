@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using WhatNow.Contracts;
 using WhatNow.Contracts.Actions;
+using WhatNow.Contracts.Exceptions;
 
 namespace WhatNow.Essentials
 {

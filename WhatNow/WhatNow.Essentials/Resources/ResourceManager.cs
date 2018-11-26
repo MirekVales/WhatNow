@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using WhatNow.Contracts.Resources;
+using WhatNow.Contracts.Resources.Monitoring;
 using WhatNow.Essentials.Resources.Monitoring;
 
 namespace WhatNow.Essentials.Resources
 {
     public class ResourceManager : IResourceManager
     {
-        public AccessMonitor AccessMonitor;
+        public IAccessMonitor AccessMonitor;
 
         public IResourcePlan ResourcePlan { get; private set; }
 
@@ -16,13 +17,20 @@ namespace WhatNow.Essentials.Resources
 
         public ResourceManager()
         {
-            AccessMonitor = new AccessMonitor();
+            AccessMonitor = new AccessMonitorSink();
             resources = new Dictionary<Enum, IAccessableResource>();
         }
 
         public ResourceManager(IResourcePlan plan)
         {
-            AccessMonitor = new AccessMonitor();
+            AccessMonitor = new AccessMonitorSink();
+            resources = new Dictionary<Enum, IAccessableResource>();
+            ResourcePlan = plan;
+        }
+
+        public ResourceManager(IResourcePlan plan, IAccessMonitor accessMonitor)
+        {
+            AccessMonitor = accessMonitor;
             resources = new Dictionary<Enum, IAccessableResource>();
             ResourcePlan = plan;
         }
@@ -39,7 +47,7 @@ namespace WhatNow.Essentials.Resources
             if (ResourcePlan == null || initialized)
                 return;
 
-            AccessMonitor = new AccessMonitor();
+            AccessMonitor.Clear();
 
             foreach (var pair in ResourcePlan.GetResourceInfo())
             {
@@ -79,7 +87,7 @@ namespace WhatNow.Essentials.Resources
             where T : IAccessableResource
         {
             if (!initialized)
-                throw new InvalidOperationException("Resources were not initialized yet");
+                throw new InvalidOperationException("Resources were not initialized");
 
             var resource = ResourcePlan[resourceToAllocate];
             var accessWait = new AccessStopwatch(AccessMonitor, resource);

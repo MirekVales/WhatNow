@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 
-namespace WhatNow.Contracts
+namespace WhatNow.Contracts.Statistics
 {
     public class ProcessingStatistics
     {
@@ -33,9 +33,12 @@ namespace WhatNow.Contracts
         char Mark(bool b)
             => b ? 'x' : 'o';
 
+        public string Header
+            => $"{TotalTime} [{Mark(IsFullyProcessed)}|{Mark(HasConsistentExecutionCounts)}]";
+
         public override string ToString()
         {
-            return $"{TotalTime} [{Mark(IsFullyProcessed)}|{Mark(HasConsistentExecutionCounts)}]"
+            return Header
                 + Environment.NewLine
                 + string.Join(Environment.NewLine, Items.OrderBy(i => i.LocationInActionMap).Select(i => i.ToString()));
         }

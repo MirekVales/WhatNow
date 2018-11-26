@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using WhatNow.Contracts;
 using WhatNow.Contracts.Resources;
 using WhatNow.Contracts.Resources.Accessable;
+using WhatNow.Contracts.ThreadPool;
 
 namespace WhatNow.Essentials.ResourceTypes
 {

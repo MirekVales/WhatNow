@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using WhatNow.Contracts.ThreadPool;
 
 namespace WhatNow.Contracts.Resources.Accessable
 {

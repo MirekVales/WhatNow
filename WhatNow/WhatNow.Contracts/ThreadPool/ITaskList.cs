@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WhatNow.Contracts
+namespace WhatNow.Contracts.ThreadPool
 {
     public interface ITaskList : IDisposable
     {

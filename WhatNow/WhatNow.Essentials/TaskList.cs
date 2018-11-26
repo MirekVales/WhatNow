@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Helios.Concurrency;
-using WhatNow.Contracts;
+using WhatNow.Contracts.ThreadPool;
 
 namespace WhatNow.Essentials
 {
@@ -15,6 +15,9 @@ namespace WhatNow.Essentials
         readonly DedicatedThreadPool pool;
         readonly DedicatedThreadPoolTaskScheduler scheduler;
         readonly TaskFactory taskFactory;
+        readonly object disposeLock = new object();
+
+        bool disposed;
 
         public int TasksCount
             => tasks.Count;
@@ -41,12 +44,16 @@ namespace WhatNow.Essentials
 
         public ITaskList With(Action action)
         {
+            ThrowIfDisposed();
+
             tasks.Add(taskFactory.StartNew(action, cancellationTokenSource.Token));
             return this;
         }
 
         public ITaskList With(IEnumerable<Action> actions)
         {
+            ThrowIfDisposed();
+
             foreach (var action in actions)
                 tasks.Add(taskFactory.StartNew(action, cancellationTokenSource.Token));
 
@@ -55,18 +62,50 @@ namespace WhatNow.Essentials
 
         public void Cancel()
         {
-            cancellationTokenSource.Cancel();
+            ThrowIfDisposed();
+
+            cancellationTokenSource?.Dispose();
             pool?.Dispose();
         }
 
         public void WaitAllFinished()
-            => Task.WaitAll(tasks.ToArray());
+        {
+            ThrowIfDisposed();
+
+            Task.WaitAll(tasks.ToArray());
+
+            ClearTasks();
+        }
+
+        void ThrowIfDisposed()
+        {
+            lock (disposeLock)
+                if (disposed)
+                    throw new ObjectDisposedException(nameof(TaskList), $"Cannot use a disposed {nameof(TaskList)}");
+        }
 
         public void Dispose()
         {
-            cancellationTokenSource.Cancel();
-            cancellationTokenSource.Dispose();
-            pool?.Dispose();
+            lock (disposeLock)
+            {
+                if (disposed)
+                    return;
+
+                cancellationTokenSource?.Dispose();
+                pool?.Dispose();
+
+                ClearTasks();
+
+                disposed = true;
+            }
+        }
+
+        void ClearTasks()
+        {
+            foreach (var task in tasks)
+                task.Dispose();
+
+            tasks.Clear();
         }
     }
 }

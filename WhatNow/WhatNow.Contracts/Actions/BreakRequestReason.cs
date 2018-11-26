@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WhatNow.Contracts
+namespace WhatNow.Contracts.Actions
 {
     public abstract class BreakRequestReason
     {

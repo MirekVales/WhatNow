@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WhatNow.Contracts
+namespace WhatNow.Contracts.Statistics
 {
     public class ProcessingStatisticsItem
     {

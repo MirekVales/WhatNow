@@ -5,6 +5,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using WhatNow.Contracts;
+using WhatNow.Contracts.Actions;
+using WhatNow.Contracts.Execution;
 using WhatNow.Contracts.Resources;
 using WhatNow.Essentials.Resources;
 

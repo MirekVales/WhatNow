@@ -7,6 +7,7 @@ using WhatNow.Contracts.Actions;
 using System.Collections.Generic;
 using WhatNow.Contracts.Dependency;
 using WhatNow.Contracts.Resources;
+using WhatNow.Contracts.Statistics;
 
 namespace WhatNow.Essentials
 {

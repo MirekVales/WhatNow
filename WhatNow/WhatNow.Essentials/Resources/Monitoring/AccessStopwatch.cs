@@ -1,16 +1,17 @@
 ﻿using System;
 using WhatNow.Contracts.Resources;
+using WhatNow.Contracts.Resources.Monitoring;
 
 namespace WhatNow.Essentials.Resources.Monitoring
 {
     public class AccessStopwatch
     {
         public DateTime Created { get; }
-        public AccessMonitor Monitor { get; }
+        public IAccessMonitor Monitor { get; }
         public ResourceDefinition Resource { get; }
         public TimeSpan Threshold { get; }
 
-        public AccessStopwatch(AccessMonitor monitor, ResourceDefinition resource)
+        public AccessStopwatch(IAccessMonitor monitor, ResourceDefinition resource)
         {
             Created = DateTime.Now;
             Monitor = monitor;
@@ -18,7 +19,7 @@ namespace WhatNow.Essentials.Resources.Monitoring
             Threshold = TimeSpan.FromMilliseconds(15);
         }
 
-        public AccessStopwatch(AccessMonitor monitor, ResourceDefinition resource, TimeSpan threshold)
+        public AccessStopwatch(IAccessMonitor monitor, ResourceDefinition resource, TimeSpan threshold)
         {
             Created = DateTime.Now;
             Monitor = monitor;

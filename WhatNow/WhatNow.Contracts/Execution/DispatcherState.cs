@@ -1,4 +1,4 @@
-﻿namespace WhatNow.Contracts
+﻿namespace WhatNow.Contracts.Execution
 {
     public enum DispatcherState
     {

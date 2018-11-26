@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using WhatNow.Contracts.Resources;
+using WhatNow.Contracts.Resources.Monitoring;
 
 namespace WhatNow.Essentials.Resources.Monitoring
 {
-    public class AccessMonitor
+    public class AccessMonitorMemory : IAccessMonitor
     {
         readonly object accessLock = new object();
-        readonly List<Event> events = new List<Event>();
+        readonly Queue<Event> events = new Queue<Event>();
 
         public void AccessEvent(ResourceDefinition resource)
             => AddEvent(new Event(EventType.Access, resource, TimeSpan.Zero));
@@ -30,7 +31,13 @@ namespace WhatNow.Essentials.Resources.Monitoring
         void AddEvent(Event @event)
         {
             lock (accessLock)
-                events.Add(@event);
+                events.Enqueue(@event);
+        }
+
+        public void Clear()
+        {
+            lock (accessLock)
+                events.Clear();
         }
     }
 }
