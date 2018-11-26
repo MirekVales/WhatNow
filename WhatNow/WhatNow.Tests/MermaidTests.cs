@@ -24,20 +24,19 @@ namespace WhatNow.Tests
 
             var pipeVisualization = new MermaidVisualizer().Visualize(map);
 
-            const string ExpectedVisualization = @"graph TD
-subgraph DummyStart
-1[DummyStart] --> |IDisposable| 2[DummyAction1]
-2[DummyAction1] --> |NullObject| 3[DummyAction2]
-3[DummyAction2] --> |NullObject| 4[DummyAction5]
-4[DummyAction5] --> |NullObject| 5[DummyAction6]
-5[DummyAction6] --> |NullObject| 6[DummyAction7]
-6[DummyAction7] --> |NullObject| 7[DummyTermination]
-5[DummyAction6] --> |NullObject| 8[DummyAction8]
-5[DummyAction6] --> |NullObject| 9[DummyAction9]
-2[DummyAction1] --> |NullObject| 10[DummyAction3]
-2[DummyAction1] --> |NullObject| 11[DummyAction4]
-end";
-            Assert.AreEqual(ExpectedVisualization.Trim(), pipeVisualization.Trim());
+            Assert.IsTrue(pipeVisualization.Contains("graph TD"));
+            Assert.IsTrue(pipeVisualization.Contains("subgraph DummyStart"));
+            Assert.IsTrue(pipeVisualization.Contains("1[DummyStart] --> |IDisposable| 2[DummyAction1]"));
+            Assert.IsTrue(pipeVisualization.Contains("2[DummyAction1] --> |NullObject| 3[DummyAction2]"));
+            Assert.IsTrue(pipeVisualization.Contains("3[DummyAction2] --> |NullObject| 4[DummyAction5]"));
+            Assert.IsTrue(pipeVisualization.Contains("4[DummyAction5] --> |NullObject| 5[DummyAction6]"));
+            Assert.IsTrue(pipeVisualization.Contains("5[DummyAction6] --> |NullObject| 6[DummyAction7]"));
+            Assert.IsTrue(pipeVisualization.Contains("6[DummyAction7] --> |NullObject| 7[DummyTermination]"));
+            Assert.IsTrue(pipeVisualization.Contains("5[DummyAction6] --> |NullObject| 8[DummyAction8]"));
+            Assert.IsTrue(pipeVisualization.Contains("5[DummyAction6] --> |NullObject| 9[DummyAction9]"));
+            Assert.IsTrue(pipeVisualization.Contains("2[DummyAction1] --> |NullObject| 10[DummyAction3]"));
+            Assert.IsTrue(pipeVisualization.Contains("2[DummyAction1] --> |NullObject| 11[DummyAction4]"));
+            Assert.IsTrue(pipeVisualization.Contains("end"));
         }
 
         class DummyStart : StartActionBase<IDisposable>
