@@ -20,10 +20,13 @@ namespace WhatNow.Essentials
             this.closeAction = closeAction;
         }
 
+        public void Invoke()
+            => closeAction?.Invoke(ElapsedTime);
+
         public void Dispose()
         {
             stopwatch.Stop();
-            closeAction(ElapsedTime);
+            Invoke();
         }
     }
 }

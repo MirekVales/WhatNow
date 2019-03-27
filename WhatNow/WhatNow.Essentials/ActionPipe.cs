@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using WhatNow.Contracts;
 using WhatNow.Contracts.Data;
 using System.Threading.Tasks;
 using WhatNow.Contracts.Actions;
