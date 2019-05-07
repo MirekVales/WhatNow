@@ -1,14 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
 using WhatNow.Contracts.Resources;
-using WhatNow.Contracts.Resources.Monitoring;
 
 namespace WhatNow.Essentials.Resources.Monitoring
 {
-    public class AccessMonitorMemory : IAccessMonitor
+    public class AccessMonitor
     {
+        readonly object eventsLock = new object();
+        readonly List<Event> events = new List<Event>();
+
         readonly object accessLock = new object();
-        readonly Queue<Event> events = new Queue<Event>();
+        readonly HashSet<Enum> runningAccesses = new HashSet<Enum>();
+
+        public void StartAccess(ResourceDefinition resource)
+        {
+            lock (accessLock)
+                runningAccesses.Add(resource.Id);
+        }
+
+        public void EndAccess(ResourceDefinition resource)
+        {
+            lock (accessLock)
+                runningAccesses.Remove(resource.Id);
+        }
+
+        public bool AccessExists(ResourceDefinition resource)
+        {
+            lock (accessLock)
+                return runningAccesses.Contains(resource.Id);
+        }
 
         public void AccessEvent(ResourceDefinition resource)
             => AddEvent(new Event(EventType.Access, resource, TimeSpan.Zero));
@@ -30,14 +50,8 @@ namespace WhatNow.Essentials.Resources.Monitoring
 
         void AddEvent(Event @event)
         {
-            lock (accessLock)
-                events.Enqueue(@event);
-        }
-
-        public void Clear()
-        {
-            lock (accessLock)
-                events.Clear();
+            lock (eventsLock)
+                events.Add(@event);
         }
     }
 }
