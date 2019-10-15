@@ -59,6 +59,14 @@ namespace WhatNow.Essentials
 
             return this;
         }
+        
+        public ITaskList With(Action<CancellationToken> action)
+        {
+            ThrowIfDisposed();
+
+            tasks.Add(taskFactory.StartNew(() => action(cancellationTokenSource.Token), cancellationTokenSource.Token));
+            return this;
+        }
 
         public void Cancel()
         {
