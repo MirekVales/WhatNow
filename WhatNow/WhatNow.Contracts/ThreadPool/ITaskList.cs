@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace WhatNow.Contracts.ThreadPool
 {
@@ -11,5 +12,6 @@ namespace WhatNow.Contracts.ThreadPool
         void WaitAllFinished();
         ITaskList With(Action action);
         ITaskList With(IEnumerable<Action> actions);
+        ITaskList With(Action<CancellationToken> action);
     }
 }
