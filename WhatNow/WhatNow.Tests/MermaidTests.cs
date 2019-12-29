@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using WhatNow.Contracts;
 using WhatNow.Contracts.Actions;
 using WhatNow.Essentials;
 using WhatNow.Visualization.Mermaid;

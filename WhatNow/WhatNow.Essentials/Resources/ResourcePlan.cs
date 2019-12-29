@@ -11,14 +11,18 @@ namespace WhatNow.Essentials.Resources
     {
         public static IResourcePlan Empty => new ResourcePlan();
 
-        readonly Dictionary<Enum, Func<IResourcePlan, ResourceDefinition>> resources = new Dictionary<Enum, Func<IResourcePlan, ResourceDefinition>>();
+        readonly Dictionary<Enum, Func<IResourcePlan, ResourceDefinition>> resources
+            = new Dictionary<Enum, Func<IResourcePlan, ResourceDefinition>>();
 
         public ResourceDefinition this[Enum id]
         {
             get => resources[id](this);
         }
 
-        public IResourcePlan WithThreadPool(Enum @enum, int numberOfThreads, TaskCreationOptions taskCreationOptions = TaskCreationOptions.None)
+        public IResourcePlan WithThreadPool(
+            Enum @enum
+            , int numberOfThreads
+            , TaskCreationOptions taskCreationOptions = TaskCreationOptions.None)
             => With(@enum, _ => new ThreadPoolResourceDefinition(@enum, numberOfThreads, taskCreationOptions));
 
         public IResourcePlan With(Enum id, Func<IResourcePlan, ResourceDefinition> resourceFunc)

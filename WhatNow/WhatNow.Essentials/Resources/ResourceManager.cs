@@ -12,7 +12,7 @@ namespace WhatNow.Essentials.Resources
 
         public IResourcePlan ResourcePlan { get; private set; }
 
-        Dictionary<Enum, IAccessableResource> resources;
+        readonly Dictionary<Enum, IAccessableResource> resources;
         bool initialized;
 
         public ResourceManager()

@@ -47,7 +47,10 @@ namespace WhatNow.Essentials
 
             pool = new DedicatedThreadPool(new DedicatedThreadPoolSettings(numberOfThreadPoolThreads));
             Scheduler = new DedicatedThreadPoolTaskScheduler(pool);
-            TaskFactory = new TaskFactory(cancellationTokenSource.Token, TaskCreationOptions.None, TaskContinuationOptions.None, Scheduler);
+            TaskFactory = new TaskFactory(
+                cancellationTokenSource.Token
+                , TaskCreationOptions.None
+                , TaskContinuationOptions.None, Scheduler);
 
             SetUpProcessingDefaultEvents();
 
@@ -68,7 +71,11 @@ namespace WhatNow.Essentials
 
             pool = new DedicatedThreadPool(new DedicatedThreadPoolSettings(numberOfThreadPoolThreads));
             Scheduler = new DedicatedThreadPoolTaskScheduler(pool);
-            TaskFactory = new TaskFactory(cancellationTokenSource.Token, taskCreationOptions, TaskContinuationOptions.None, Scheduler);
+            TaskFactory = new TaskFactory(
+                cancellationTokenSource.Token
+                , taskCreationOptions
+                , TaskContinuationOptions.None
+                , Scheduler);
 
             SetUpProcessingDefaultEvents();
 
