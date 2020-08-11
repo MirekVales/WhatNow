@@ -123,20 +123,21 @@ namespace WhatNow.Essentials
 
         IEnumerable<ProcessingStatisticsItem> GetProcessingStats()
         {
-            foreach (var type in executions)
-            {
-                yield return new ProcessingStatisticsItem(
-                    type.Key,
-                    Map.GetPosition(type.Key),
-                    type.Value.Count,
-                    TimeSpan.FromMilliseconds(
-                        type
-                        .Value
-                        .Select(v => v.TotalMilliseconds)
-                        .DefaultIfEmpty(0)
-                        .Average())
-                    );
-            }
+            lock (executionsLock)
+                foreach (var type in executions)
+                {
+                    yield return new ProcessingStatisticsItem(
+                        type.Key,
+                        Map.GetPosition(type.Key),
+                        type.Value.Count,
+                        TimeSpan.FromMilliseconds(
+                            type
+                            .Value
+                            .Select(v => v.TotalMilliseconds)
+                            .DefaultIfEmpty(0)
+                            .Average())
+                        );
+                }
         }
     }
 }
