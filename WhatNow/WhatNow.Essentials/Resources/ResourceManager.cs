@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using WhatNow.Contracts.Resources;
-using WhatNow.Contracts.Resources.Monitoring;
-using WhatNow.Essentials.Resources.Monitoring;
-
-namespace WhatNow.Essentials.Resources
+﻿namespace WhatNow.Essentials.Resources
 {
+    using System;
+    using System.Collections.Generic;
+    using WhatNow.Contracts.Resources;
+    using WhatNow.Contracts.Resources.Monitoring;
+    using WhatNow.Essentials.Resources.Monitoring;
+
     public class ResourceManager : IResourceManager
     {
         public IAccessMonitor AccessMonitor;

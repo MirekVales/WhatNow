@@ -1,11 +1,11 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using WhatNow.Contracts.Resources;
-using WhatNow.Contracts.Resources.Accessable;
-using WhatNow.Essentials.Resources;
-
-namespace WhatNow.Tests
+﻿namespace WhatNow.Tests
 {
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using System;
+    using WhatNow.Contracts.Resources;
+    using WhatNow.Contracts.Resources.Accessable;
+    using WhatNow.Essentials.Resources;
+
     [TestClass]
     public class ResourceManagementTests
     {

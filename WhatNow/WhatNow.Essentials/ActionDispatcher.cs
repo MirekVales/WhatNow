@@ -1,17 +1,17 @@
-﻿using Helios.Concurrency;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using WhatNow.Contracts;
-using WhatNow.Contracts.Actions;
-using WhatNow.Contracts.Execution;
-using WhatNow.Contracts.Resources;
-using WhatNow.Essentials.Resources;
-
-namespace WhatNow.Essentials
+﻿namespace WhatNow.Essentials
 {
+    using Helios.Concurrency;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using WhatNow.Contracts;
+    using WhatNow.Contracts.Actions;
+    using WhatNow.Contracts.Execution;
+    using WhatNow.Contracts.Resources;
+    using WhatNow.Essentials.Resources;
+
     public class ActionDispatcher : IActionDispatcher
     {
         readonly IActionPipe[] pipes;
@@ -147,7 +147,6 @@ namespace WhatNow.Essentials
             {
                 while (!IsFinished)
                     DoEvents();
-
             });
         }
 

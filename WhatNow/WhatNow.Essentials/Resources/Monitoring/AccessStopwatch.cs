@@ -1,9 +1,9 @@
-﻿using System;
-using WhatNow.Contracts.Resources;
-using WhatNow.Contracts.Resources.Monitoring;
-
-namespace WhatNow.Essentials.Resources.Monitoring
+﻿namespace WhatNow.Essentials.Resources.Monitoring
 {
+    using System;
+    using WhatNow.Contracts.Resources;
+    using WhatNow.Contracts.Resources.Monitoring;
+
     public class AccessStopwatch
     {
         public DateTime Created { get; }

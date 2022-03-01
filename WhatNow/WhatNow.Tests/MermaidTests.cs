@@ -1,11 +1,11 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using WhatNow.Contracts.Actions;
-using WhatNow.Essentials;
-using WhatNow.Visualization.Mermaid;
-
-namespace WhatNow.Tests
+﻿namespace WhatNow.Tests
 {
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using System;
+    using WhatNow.Contracts.Actions;
+    using WhatNow.Essentials;
+    using WhatNow.Visualization.Mermaid;
+
     [TestClass]
     public class MermaidTests
     {

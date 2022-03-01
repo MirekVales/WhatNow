@@ -1,8 +1,8 @@
-﻿using System;
-using System.Diagnostics;
-
-namespace WhatNow.Essentials
+﻿namespace WhatNow.Essentials
 {
+    using System;
+    using System.Diagnostics;
+
     public class BlockStopwatch : IDisposable
     {
         readonly Stopwatch stopwatch;
@@ -11,14 +11,10 @@ namespace WhatNow.Essentials
         public TimeSpan ElapsedTime => stopwatch.Elapsed;
 
         public BlockStopwatch()
-        {
-            stopwatch = Stopwatch.StartNew();
-        }
+            => stopwatch = Stopwatch.StartNew();
 
         public BlockStopwatch(Action<TimeSpan> closeAction) : this()
-        {
-            this.closeAction = closeAction;
-        }
+            => this.closeAction = closeAction;
 
         public void Invoke()
             => closeAction?.Invoke(ElapsedTime);

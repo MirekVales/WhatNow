@@ -1,14 +1,14 @@
-﻿using Helios.Concurrency;
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using WhatNow.Contracts.Resources;
-using WhatNow.Contracts.Resources.Accessable;
-using WhatNow.Contracts.ThreadPool;
-
-namespace WhatNow.Essentials.ResourceTypes
+﻿namespace WhatNow.Essentials.ResourceTypes
 {
+    using System;
+    using System.Threading;
+    using Helios.Concurrency;
+    using System.Threading.Tasks;
+    using System.Collections.Generic;
+    using WhatNow.Contracts.Resources;
+    using WhatNow.Contracts.ThreadPool;
+    using WhatNow.Contracts.Resources.Accessable;
+
     public class ThreadPool : IAccessableResource, IThreadPool
     {
         readonly DedicatedThreadPool threadPool;

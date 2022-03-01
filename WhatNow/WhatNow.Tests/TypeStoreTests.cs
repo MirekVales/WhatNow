@@ -1,8 +1,8 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using WhatNow.Contracts.Data;
-
 namespace WhatNow.Tests
 {
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using WhatNow.Contracts.Data;
+
     [TestClass]
     public class TypeStoreTests
     {

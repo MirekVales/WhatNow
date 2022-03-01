@@ -1,9 +1,9 @@
-﻿using System;
-using WhatNow.Contracts.Resources;
-using WhatNow.Contracts.Resources.Monitoring;
-
-namespace WhatNow.Essentials.Resources.Monitoring
+﻿namespace WhatNow.Essentials.Resources.Monitoring
 {
+    using System;
+    using WhatNow.Contracts.Resources;
+    using WhatNow.Contracts.Resources.Monitoring;
+
     public class AccessMonitorSink : IAccessMonitor
     {
         public void AccessEvent(ResourceDefinition resource)
