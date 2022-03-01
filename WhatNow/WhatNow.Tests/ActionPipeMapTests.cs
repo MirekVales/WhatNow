@@ -1,12 +1,11 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Linq;
-using WhatNow.Contracts;
-using WhatNow.Contracts.Actions;
-using WhatNow.Contracts.Exceptions;
-using WhatNow.Essentials;
-
-namespace WhatNow.Tests
+﻿namespace WhatNow.Tests
 {
+    using System.Linq;
+    using WhatNow.Essentials;
+    using WhatNow.Contracts.Actions;
+    using WhatNow.Contracts.Exceptions;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
     [TestClass]
     public class ActionPipeMapTests
     {

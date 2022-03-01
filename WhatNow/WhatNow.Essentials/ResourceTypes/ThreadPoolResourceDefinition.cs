@@ -1,10 +1,10 @@
-﻿using Helios.Concurrency;
-using System;
-using System.Threading.Tasks;
-using WhatNow.Contracts.Resources;
-
-namespace WhatNow.Essentials.ResourceTypes
+﻿namespace WhatNow.Essentials.ResourceTypes
 {
+    using System;
+    using Helios.Concurrency;
+    using System.Threading.Tasks;
+    using WhatNow.Contracts.Resources;
+
     public class ThreadPoolResourceDefinition : ResourceDefinition
     {
         readonly int numberOfThreads;

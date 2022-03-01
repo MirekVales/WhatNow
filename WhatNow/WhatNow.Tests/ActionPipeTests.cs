@@ -1,17 +1,17 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using WhatNow.Contracts.Actions;
-using WhatNow.Contracts.Data;
-using WhatNow.Contracts.Resources;
-using WhatNow.Essentials;
-using WhatNow.Essentials.Dependency;
-using WhatNow.Essentials.Resources;
-
-namespace WhatNow.Tests
+﻿namespace WhatNow.Tests
 {
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using System;
+    using System.Data;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using WhatNow.Contracts.Actions;
+    using WhatNow.Contracts.Data;
+    using WhatNow.Contracts.Resources;
+    using WhatNow.Essentials;
+    using WhatNow.Essentials.Dependency;
+    using WhatNow.Essentials.Resources;
+
     [TestClass]
     public class ActionPipeTests
     {

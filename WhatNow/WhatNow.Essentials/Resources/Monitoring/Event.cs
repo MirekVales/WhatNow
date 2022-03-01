@@ -1,8 +1,8 @@
-﻿using System;
-using WhatNow.Contracts.Resources;
-
-namespace WhatNow.Essentials.Resources.Monitoring
+﻿namespace WhatNow.Essentials.Resources.Monitoring
 {
+    using System;
+    using WhatNow.Contracts.Resources;
+
     public struct Event
     {
         public DateTime Created { get; }

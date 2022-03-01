@@ -1,11 +1,10 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using WhatNow.Contracts;
-using WhatNow.Contracts.Actions;
-using WhatNow.Contracts.Resources;
-using WhatNow.Essentials.Resources;
-
-namespace WhatNow.Tests
+﻿namespace WhatNow.Tests
 {
+    using WhatNow.Contracts.Actions;
+    using WhatNow.Contracts.Resources;
+    using WhatNow.Essentials.Resources;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
     [TestClass]
     public class ActionBaseTests
     {

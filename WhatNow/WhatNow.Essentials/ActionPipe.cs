@@ -1,15 +1,15 @@
-﻿using System;
-using System.Linq;
-using WhatNow.Contracts.Data;
-using System.Threading.Tasks;
-using WhatNow.Contracts.Actions;
-using System.Collections.Generic;
-using WhatNow.Contracts.Dependency;
-using WhatNow.Contracts.Resources;
-using WhatNow.Contracts.Statistics;
-
-namespace WhatNow.Essentials
+﻿namespace WhatNow.Essentials
 {
+    using System;
+    using System.Linq;
+    using WhatNow.Contracts.Data;
+    using System.Threading.Tasks;
+    using WhatNow.Contracts.Actions;
+    using System.Collections.Generic;
+    using WhatNow.Contracts.Dependency;
+    using WhatNow.Contracts.Resources;
+    using WhatNow.Contracts.Statistics;
+
     public class ActionPipe : IActionPipe
     {
         public ActionToken ActionToken { get; }

@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using WhatNow.Contracts.Resources;
-using WhatNow.Essentials.ResourceTypes;
-
-namespace WhatNow.Essentials.Resources
+﻿namespace WhatNow.Essentials.Resources
 {
+    using System;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using System.Collections.Generic;
+    using WhatNow.Contracts.Resources;
+    using WhatNow.Essentials.ResourceTypes;
+
     public class ResourcePlan : IResourcePlan
     {
         public static IResourcePlan Empty => new ResourcePlan();

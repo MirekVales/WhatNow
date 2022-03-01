@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using WhatNow.Contracts.Resources;
-
-namespace WhatNow.Essentials.Resources.Monitoring
+﻿namespace WhatNow.Essentials.Resources.Monitoring
 {
+    using System;
+    using System.Collections.Generic;
+    using WhatNow.Contracts.Resources;
+
     public class AccessMonitor
     {
         readonly object eventsLock = new object();
