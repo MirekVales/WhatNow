@@ -1,12 +1,12 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using Helios.Concurrency;
-using WhatNow.Contracts.ThreadPool;
-
-namespace WhatNow.Essentials
+﻿namespace WhatNow.Essentials
 {
+    using System;
+    using System.Threading;
+    using Helios.Concurrency;
+    using System.Threading.Tasks;
+    using System.Collections.Generic;
+    using WhatNow.Contracts.ThreadPool;
+
     public class TaskList : ITaskList
     {
         readonly CancellationTokenSource cancellationTokenSource;
@@ -59,7 +59,7 @@ namespace WhatNow.Essentials
 
             return this;
         }
-        
+
         public ITaskList With(Action<CancellationToken> action)
         {
             ThrowIfDisposed();
@@ -82,7 +82,16 @@ namespace WhatNow.Essentials
 
             Task.WaitAll(tasks.ToArray());
 
-            ClearTasks();
+            ClearCompletedTasks();
+        }
+
+        public async Task WaitAllFinishedAsync()
+        {
+            ThrowIfDisposed();
+
+            await Task.WhenAll(tasks.ToArray());
+
+            ClearCompletedTasks();
         }
 
         void ThrowIfDisposed()
@@ -102,13 +111,13 @@ namespace WhatNow.Essentials
                 cancellationTokenSource?.Dispose();
                 pool?.Dispose();
 
-                ClearTasks();
+                ClearCompletedTasks();
 
                 disposed = true;
             }
         }
 
-        void ClearTasks()
+        void ClearCompletedTasks()
         {
             foreach (var task in tasks)
                 task.Dispose();

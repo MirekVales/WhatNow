@@ -31,12 +31,14 @@
         public bool BreakRequested => Current.Any(a => a.BreakRequested);
 
         readonly object executionsLock = new object();
-        readonly Dictionary<Type, Queue<TimeSpan>> executions;
+        readonly Dictionary<Type, FixedSizedQueue<TimeSpan>> executions;
 
         public IEnumerable<BreakRequestReason> BreakReasons => actions
             .Select(a => a.Value.BreakRequestReason)
             .Where(br => br != null)
             .ToArray();
+
+        public const int MAX_QUEUE_SIZE = 100;
 
         public ActionPipe(IActionPipeMap map, ActionToken actionToken, IDependencyResolver dependencyResolver)
         {
@@ -50,7 +52,7 @@
 
             Current = new IAction[0];
 
-            executions = actions.Keys.ToDictionary(k => k, _ => new Queue<TimeSpan>());
+            executions = actions.Keys.ToDictionary(k => k, _ => new FixedSizedQueue<TimeSpan>(MAX_QUEUE_SIZE));
         }
 
         public void Restart()
@@ -63,6 +65,10 @@
                 .ToDictionary(k => k, t => (IAction)dependencyResolver.Resolve(t));
 
             Current = new IAction[0];
+
+            lock (executionsLock)
+                foreach (var type in executions.Values)
+                    type.Clear();
         }
 
         public bool TryGetNextTask(IResourceManager resourceManager, TaskFactory taskFactory, out Task task)
